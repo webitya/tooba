@@ -1,0 +1,1961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sona</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#F2EDE0; --page:#FAF7EE; --ink:#1A1714;
+    --shadow:#3A332C; --ochre:#9A6B2F;
+    --hairline:rgba(26,23,20,.26);
+    --margin:32px; --fade:240ms;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    background:#d4d1c9;display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:40px 0;
+    font-family:'Source Serif 4',serif;-webkit-font-smoothing:antialiased;
+  }
+  .device{
+    width:390px;height:844px;background:var(--ivory);
+    position:relative;overflow:hidden;
+    box-shadow:0 28px 70px rgba(0,0,0,.28);
+  }
+  .screen{
+    position:absolute;inset:0;
+    padding:60px var(--margin) 44px var(--margin);
+    display:flex;flex-direction:column;
+    opacity:0;visibility:hidden;
+    transition:opacity var(--fade) ease, visibility 0s linear var(--fade);
+    overflow-y:auto;
+  }
+  .screen.is-active{
+    opacity:1;visibility:visible;
+    transition:opacity var(--fade) ease, visibility 0s;
+  }
+  .screen::-webkit-scrollbar{display:none;}
+
+  .folio{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--shadow);}
+  .folio .on{color:var(--ink);}
+  .folio .off{opacity:.4;}
+  .meta{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--shadow);}
+
+  .headline{font-weight:600;color:var(--ink);font-size:40px;line-height:1.1;letter-spacing:-.012em;}
+  .headline.lg{font-size:46px;}
+  .body{font-size:16.5px;line-height:1.52;color:var(--shadow);max-width:31ch;}
+
+  .action{
+    font-family:'Source Serif 4',serif;font-size:16.5px;color:var(--ink);
+    background:none;border:none;border-bottom:1px solid var(--ink);
+    padding:0 38px 6px 0;text-align:left;cursor:pointer;
+    align-self:flex-start;transition:opacity 120ms ease;
+  }
+  .action:active{opacity:.5;}
+  .action:disabled{color:var(--shadow);opacity:.34;border-bottom-color:var(--hairline);cursor:default;}
+  .action.quiet{border-bottom:none;color:var(--shadow);font-size:14px;padding-right:0;}
+
+  .gap-xs{height:12px;flex:none;}
+  .gap-sm{height:20px;flex:none;}
+  .gap-md{height:34px;flex:none;}
+  .gap-lg{height:54px;flex:none;}
+  .spacer{flex:1 1 auto;min-height:20px;}
+
+  .indexmark{
+    align-self:flex-end;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--shadow);background:none;border:none;cursor:pointer;transition:opacity 120ms ease;
+  }
+  .indexmark:active{opacity:.5;}
+  .backmark{
+    position:absolute;top:30px;left:var(--margin);
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--shadow);background:none;border:none;cursor:pointer;
+    display:none;transition:opacity 120ms ease;z-index:5;
+  }
+  .backmark:active{opacity:.5;}
+  #b3 .backmark{color:rgba(242,237,224,.5);}
+
+  .option-list{list-style:none;}
+  .option{
+    display:flex;align-items:baseline;gap:16px;padding:19px 0;
+    border-top:1px solid var(--hairline);cursor:pointer;transition:opacity 120ms ease;
+  }
+  .option:last-child{border-bottom:1px solid var(--hairline);}
+  .option:active{opacity:.6;}
+  .option .num{font-size:11px;letter-spacing:.14em;color:var(--shadow);flex:none;}
+  .option .label{font-size:25px;font-weight:500;color:var(--ink);}
+  .option.is-selected .num{color:var(--ochre);}
+  .option-list:not(.is-untouched) .option:not(.is-selected) .label{color:var(--shadow);opacity:.5;}
+
+  /* scrollable time picker — every minute selectable */
+  .picker{
+    display:flex;align-items:center;justify-content:flex-start;gap:6px;
+    position:relative;height:200px;
+  }
+  /* the fixed selection band — the value under it is the chosen one */
+  .picker::before{
+    content:"";position:absolute;left:0;right:0;top:80px;height:40px;
+    border-top:1px solid var(--hairline);
+    border-bottom:1px solid var(--hairline);
+    pointer-events:none;
+  }
+  .picker-col{
+    height:200px;overflow-y:scroll;scroll-snap-type:y mandatory;
+    -ms-overflow-style:none;scrollbar-width:none;
+    text-align:center;
+  }
+  .picker-col::-webkit-scrollbar{display:none;}
+  /* 80px top+bottom padding centres the first/last items under the band */
+  .picker-pad{height:80px;}
+  .picker-item{
+    height:40px;line-height:40px;
+    font-weight:600;color:var(--shadow);
+    font-size:34px;letter-spacing:-.01em;
+    scroll-snap-align:center;opacity:.35;
+    transition:opacity 160ms ease, color 160ms ease;
+  }
+  .picker-item.sel{opacity:1;color:var(--ink);font-size:40px;}
+  .picker-colon{
+    font-weight:600;color:var(--ink);font-size:40px;line-height:1;
+    padding:0 2px;
+  }
+  .picker-ampm{
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--shadow);margin-left:14px;align-self:center;
+  }
+  .field-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--shadow);}
+
+  .hinge .headline{font-size:52px;}
+  .hinge .body{font-size:18px;}
+
+  /* duration options as a list — now four */
+  .dur-list{list-style:none;}
+  .dur-opt{
+    display:flex;align-items:baseline;gap:14px;padding:15px 0;
+    border-top:1px solid var(--hairline);cursor:pointer;transition:opacity 120ms ease;
+  }
+  .dur-opt:last-child{border-bottom:1px solid var(--hairline);}
+  .dur-opt:active{opacity:.6;}
+  .dur-opt .dnum{font-size:24px;font-weight:600;color:var(--ink);min-width:48px;}
+  .dur-opt .dname{font-size:15px;color:var(--shadow);}
+  .dur-opt.is-selected .dnum{color:var(--ink);}
+  .dur-list:not(.is-untouched) .dur-opt:not(.is-selected) .dnum{color:var(--shadow);opacity:.45;}
+  .dur-opt.is-selected::after{content:"\2014";color:var(--ochre);margin-left:auto;font-size:14px;}
+
+  .rowlist{list-style:none;}
+  .row{
+    display:block;width:100%;text-align:left;background:none;border:none;cursor:pointer;
+    padding:18px 0;border-top:1px solid var(--hairline);transition:opacity 120ms ease;
+  }
+  .rowlist .row:last-child{border-bottom:1px solid var(--hairline);}
+  .row:active{opacity:.6;}
+  .row .row-num{font-size:11px;letter-spacing:.14em;color:var(--shadow);margin-right:14px;}
+  .row .row-name{font-size:20px;font-weight:500;color:var(--ink);}
+  .row .row-sub{display:block;font-size:13.5px;color:var(--shadow);margin-top:4px;}
+  .row.recorded .row-name{color:var(--shadow);}
+  .row .edition{float:right;font-size:11px;letter-spacing:.14em;color:var(--ochre);}
+
+  #b3{background:var(--ink);justify-content:flex-start;align-items:flex-start;
+      padding-top:160px;transition:opacity 600ms ease, visibility 0s;}
+  #b3.is-active{transition:opacity 600ms ease, visibility 0s;}
+
+  /* C5done — the dark, ceremonial order-placed screen */
+  #c5done{background:var(--ink);transition:opacity 600ms ease, visibility 0s;}
+  #c5done.is-active{transition:opacity 600ms ease, visibility 0s;}
+  #c5done .meta{color:rgba(242,237,224,.5);}
+  #c5done .headline{color:var(--ivory);}
+  #c5done .body{color:rgba(242,237,224,.62);}
+  #c5done .ledger li{
+    border-top-color:rgba(242,237,224,.18);
+    color:rgba(242,237,224,.6);
+  }
+  #c5done .ledger li:last-child{border-bottom-color:rgba(242,237,224,.18);}
+  #c5done .ledger .amt{color:var(--ivory);}
+  #c5done .action{color:var(--ivory);border-bottom-color:rgba(242,237,224,.6);}
+  #c5done .indexmark{color:rgba(242,237,224,.5);}
+  #c5done .backmark{color:rgba(242,237,224,.5);}
+  .seq-meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(242,237,224,.5);}
+  .seq-movement{
+    font-size:38px;font-weight:500;color:var(--ivory);line-height:1.15;
+    letter-spacing:-.01em;transition:opacity 800ms ease;
+  }
+  .seq-note{font-size:14.5px;color:rgba(242,237,224,.55);line-height:1.5;max-width:28ch;}
+  .seq-status{
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(242,237,224,.4);transition:opacity 800ms ease;
+  }
+  .seq-line{height:1px;background:rgba(242,237,224,.22);width:100%;margin-top:8px;position:relative;}
+  .seq-line::after{
+    content:"";position:absolute;left:0;top:0;height:1px;
+    background:rgba(242,237,224,.7);width:0%;
+  }
+  .seq-line.run::after{width:100%;}
+  .seq-end{
+    align-self:flex-start;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(242,237,224,.4);background:none;border:none;cursor:pointer;
+    transition:opacity 120ms ease;
+  }
+  .seq-end:active{opacity:.5;}
+  .mute{
+    position:absolute;top:60px;right:var(--margin);
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(242,237,224,.5);background:none;border:none;cursor:pointer;
+    transition:opacity 120ms ease;
+  }
+  .mute:active{opacity:.5;}
+
+  .ledger{list-style:none;}
+  .ledger li{
+    display:flex;justify-content:space-between;padding:11px 0;
+    border-top:1px solid var(--hairline);font-size:14.5px;color:var(--shadow);
+  }
+  .ledger li:last-child{border-bottom:1px solid var(--hairline);}
+  .ledger .amt{color:var(--ink);}
+  .credit{font-size:13.5px;color:var(--shadow);line-height:1.5;}
+  .credit em{font-style:italic;color:var(--ink);}
+
+  .recognise{
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ochre);opacity:0;transition:opacity 600ms ease;
+  }
+  .recognise.shown{opacity:1;}
+
+  .empty-note{font-size:13.5px;color:var(--shadow);font-style:italic;}
+
+  /* message form — write to Sona */
+  .msg-field{
+    font-family:'Source Serif 4',serif;font-size:15px;color:var(--ink);
+    background:none;border:none;border-bottom:1px solid var(--hairline);
+    padding:8px 0;width:100%;outline:none;
+  }
+  .msg-field:focus{border-bottom-color:var(--ink);}
+  .msg-area{
+    font-family:'Source Serif 4',serif;font-size:15px;line-height:1.5;
+    color:var(--ink);background:none;
+    border:1px solid var(--hairline);border-radius:2px;
+    padding:12px;width:100%;min-height:120px;resize:none;outline:none;
+  }
+  .msg-area:focus{border-color:var(--ink);}
+  .msg-label{
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--shadow);
+  }
+</style>
+</head>
+<body>
+<div class="device" id="device">
+
+  <!-- ===================== ZONE A — FIRST RUN ===================== -->
+
+  <!-- A0 — the title page: brand first, the way a book shows its title -->
+  <section class="screen is-active" id="a0">
+    <div class="folio" style="visibility:hidden;">01</div>
+    <div class="gap-md"></div>
+    <h1 class="headline lg">Sona</h1>
+    <div class="gap-sm"></div>
+    <p class="body">A method for the hour before sleep.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('a1')">Enter.</button>
+  </section>
+
+  <section class="screen" id="a1">
+    <div class="folio"><span class="on">01</span>&nbsp;&nbsp;<span class="off">02</span>&nbsp;&nbsp;<span class="off">03</span></div>
+    <div class="gap-md"></div>
+    <h1 class="headline lg">The hour<br>before sleep.</h1>
+    <div class="gap-md"></div>
+    <p class="body">Sona gives the last hour of the day a shape — a nightly sequence that leads you down into sleep, rather than a remedy taken once you are already there.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('a2')">Begin.</button>
+  </section>
+
+  <section class="screen" id="a2">
+    <div class="folio"><span class="off">01</span>&nbsp;&nbsp;<span class="on">02</span>&nbsp;&nbsp;<span class="off">03</span></div>
+    <div class="gap-md"></div>
+    <h1 class="headline lg">A sequence,<br>not a score.</h1>
+    <div class="gap-md"></div>
+    <p class="body">Each evening, a scent composition begins the ritual. The Dock diffuses it gradually while the app lowers the light and softens the sound. You arrive at sleep rather than chase it.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('a3')">Read on.</button>
+  </section>
+
+  <section class="screen" id="a3">
+    <div class="folio"><span class="off">01</span>&nbsp;&nbsp;<span class="off">02</span>&nbsp;&nbsp;<span class="on">03</span></div>
+    <div class="gap-md"></div>
+    <h1 class="headline lg">Tonight,<br>the first.</h1>
+    <div class="gap-md"></div>
+    <p class="body">A few questions set the ritual.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('a0dock')">Set it up.</button>
+  </section>
+
+  <section class="screen" id="a0dock">
+    <div class="meta">SETUP — THE DOCK</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Place the Dock<br>by the bed.</h1>
+    <div class="gap-md"></div>
+    <p class="body">Set it where the evening already feels quieter — a bedside table, within reach, away from the day's screens. It will stay there. The ritual begins from this one spot.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('a0pair')">The Dock is placed.</button>
+  </section>
+
+  <!-- A0-pair — the connection, witnessed once -->
+  <section class="screen" id="a0pair">
+    <div class="meta">SETUP — THE DOCK</div>
+    <div class="gap-md"></div>
+    <h1 class="headline" id="pairHeadline">Finding<br>the Dock.</h1>
+    <div class="gap-md"></div>
+    <p class="body" id="pairBody">Sona connects to the Dock directly, over Bluetooth — no account, no network. Keep the phone near the Dock for a moment.</p>
+    <div class="gap-sm"></div>
+    <p class="recognise" id="pairMark">Connected — Sona Dock</p>
+    <div class="spacer"></div>
+    <button class="action" id="pairAction" disabled onclick="advanceFromPair()">Continue.</button>
+  </section>
+
+  <section class="screen" id="a4">
+    <div class="meta">SETUP — 01 / 03</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">What are you<br>here for?</h1>
+    <div class="gap-md"></div>
+    <ul class="option-list is-untouched" id="optList">
+      <li class="option" data-v="Sleep" onclick="pick(this)"><span class="num">01</span><span class="label">Sleep</span></li>
+      <li class="option" data-v="Stress" onclick="pick(this)"><span class="num">02</span><span class="label">Stress</span></li>
+      <li class="option" data-v="Daily ritual" onclick="pick(this)"><span class="num">03</span><span class="label">Daily ritual</span></li>
+    </ul>
+    <div class="spacer"></div>
+    <button class="action" id="a4action" disabled onclick="go('a5')">Continue.</button>
+  </section>
+
+  <!-- A5 — free clock, no range limit -->
+  <section class="screen" id="a5">
+    <div class="meta">SETUP — 02 / 03</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">When does your<br>evening begin?</h1>
+    <div class="gap-md"></div>
+    <span class="field-label">Set the time — your evening, your call</span>
+    <div class="gap-md"></div>
+    <div class="picker">
+      <div class="picker-col" id="pickHour"></div>
+      <span class="picker-colon">:</span>
+      <div class="picker-col" id="pickMin"></div>
+      <span class="picker-ampm" id="pickAmpm">PM</span>
+    </div>
+    <div class="spacer"></div>
+    <button class="action" id="a5action" onclick="advanceFromSetup('a5')">Continue.</button>
+  </section>
+
+  <!-- A6 — duration, now four options including 10 -->
+  <section class="screen" id="a6">
+    <div class="meta">SETUP — 03 / 03</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">How long is<br>the descent?</h1>
+    <div class="gap-md"></div>
+    <p class="body">Most evenings settle around thirty minutes. The ten-minute setting is the same ritual, compressed — for the nights that got away from you.</p>
+    <div class="gap-xs"></div>
+    <p class="meta" style="text-transform:none;letter-spacing:0;font-size:13.5px;">This becomes your usual length. You can vary it for a single night from the ritual itself.</p>
+    <div class="gap-md"></div>
+    <ul class="dur-list is-untouched" id="durList">
+      <li class="dur-opt" data-d="10" onclick="pickDur(this)"><span class="dnum">10</span><span class="dname">Compressed</span></li>
+      <li class="dur-opt" data-d="20" onclick="pickDur(this)"><span class="dnum">20</span><span class="dname">Brief</span></li>
+      <li class="dur-opt is-selected" data-d="30" onclick="pickDur(this)"><span class="dnum">30</span><span class="dname">The usual evening</span></li>
+      <li class="dur-opt" data-d="40" onclick="pickDur(this)"><span class="dnum">40</span><span class="dname">Unhurried</span></li>
+    </ul>
+    <div class="spacer"></div>
+    <button class="action" id="a6action" onclick="advanceFromSetup('a6')">Set the ritual.</button>
+  </section>
+
+  <section class="screen" id="a7">
+    <div class="folio"><span class="on">SET</span></div>
+    <div class="gap-md"></div>
+    <h1 class="headline lg">Set.</h1>
+    <div class="gap-md"></div>
+    <p class="body" id="a7copy"></p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('home')">Close.</button>
+  </section>
+
+  <!-- ===================== ZONE B — NIGHTLY RITUAL ===================== -->
+
+  <!-- single Home screen, populated from state -->
+  <section class="screen" id="home">
+    <div class="meta" id="homeMeta">WEDNESDAY 23 MAY — NO. 01</div>
+    <div class="gap-lg"></div>
+    <h1 class="headline" id="homeHeadline">Nothing<br>recorded yet.</h1>
+    <div class="gap-md"></div>
+    <p class="body" id="homeBody">Your first sequence is set for tonight. The record begins after it.</p>
+    <div class="gap-sm"></div>
+    <p class="empty-note" id="homeLate" style="display:none;"></p>
+    <p class="empty-note" id="homeLow" style="display:none;"></p>
+    <div class="spacer"></div>
+    <button class="action" id="homeAction" onclick="go('b2')">See tonight's sequence.</button>
+    <div class="gap-md"></div>
+    <p class="meta" id="homeLast" style="text-transform:none;letter-spacing:0;font-size:13.5px;display:none;"></p>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('c1')">Index</button>
+  </section>
+
+  <!-- B2 — place the composition; populated from cycle -->
+  <section class="screen hinge" id="b2">
+    <div class="meta" id="b2Meta">TONIGHT</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Place the<br>composition.</h1>
+    <div class="gap-md"></div>
+    <p class="body" id="b2Body"></p>
+    <div class="gap-xs"></div>
+    <p class="meta" id="b2Length" style="text-transform:none;letter-spacing:0;font-size:13.5px;"></p>
+    <div class="gap-sm"></div>
+    <p class="recognise" id="recogniseMark"></p>
+    <div class="spacer"></div>
+    <button class="action" id="b2action" onclick="confirmComposition()">The composition is placed.</button>
+    <div class="gap-md"></div>
+    <button class="action quiet" onclick="go('b2alt')">— choose a different composition —</button>
+    <div class="gap-xs"></div>
+    <button class="action quiet" onclick="go('b2len')">— change tonight's length —</button>
+  </section>
+
+  <!-- B2-alt — override: pick a different composition tonight -->
+  <section class="screen" id="b2alt">
+    <div class="meta">TONIGHT — CHOOSE</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">A different<br>composition.</h1>
+    <div class="gap-sm"></div>
+    <p class="body">Tonight need not follow the cycle. Choose what the evening actually calls for.</p>
+    <div class="gap-md"></div>
+    <ul class="rowlist" id="b2altList"></ul>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('b2')">Tonight</button>
+  </section>
+
+  <!-- B2-len — change tonight's descent length (tonight only) -->
+  <section class="screen" id="b2len">
+    <div class="meta">TONIGHT — LENGTH</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Tonight's<br>length.</h1>
+    <div class="gap-sm"></div>
+    <p class="body">For tonight only. Your usual length is unchanged — this evening can simply be shorter or longer.</p>
+    <div class="gap-md"></div>
+    <ul class="dur-list is-untouched" id="b2lenList">
+      <li class="dur-opt" data-d="10" onclick="pickTonightLen(this)"><span class="dnum">10</span><span class="dname">Compressed</span></li>
+      <li class="dur-opt" data-d="20" onclick="pickTonightLen(this)"><span class="dnum">20</span><span class="dname">Brief</span></li>
+      <li class="dur-opt" data-d="30" onclick="pickTonightLen(this)"><span class="dnum">30</span><span class="dname">The usual evening</span></li>
+      <li class="dur-opt" data-d="40" onclick="pickTonightLen(this)"><span class="dnum">40</span><span class="dname">Unhurried</span></li>
+    </ul>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('b2')">Use this tonight.</button>
+  </section>
+
+  <section class="screen" id="b3">
+    <button class="mute" id="muteBtn" onclick="toggleMute()">Sound on</button>
+    <span class="seq-meta" id="seqMeta">NO. 01 — LONG NIGHT</span>
+    <div class="gap-lg"></div>
+    <h2 class="seq-movement" id="seqMovement">The Window Hour</h2>
+    <div class="gap-md"></div>
+    <p class="seq-note">Set the phone down. Sona will continue.</p>
+    <div class="gap-sm"></div>
+    <p class="seq-status" id="seqStatus">Diffusing — light lowering</p>
+    <div class="gap-lg"></div>
+    <div class="seq-line" id="seqLine"></div>
+    <div class="spacer"></div>
+    <button class="seq-end" onclick="pauseSequence()">End the sequence</button>
+  </section>
+
+  <!-- B-pause — the humane intermediate: resume or end -->
+  <section class="screen" id="bpause">
+    <div class="meta">SEQUENCE PAUSED</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">The sequence<br>is paused.</h1>
+    <div class="gap-md"></div>
+    <p class="body">Nothing is lost. You can return to the sequence where it stopped, or close it for tonight.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="resumeSequence()">Resume the descent.</button>
+    <div class="gap-md"></div>
+    <button class="action quiet" onclick="go('b4')">— end for tonight —</button>
+  </section>
+
+  <section class="screen" id="b4">
+    <div class="meta">SEQUENCE COMPLETE</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">The sequence<br>is complete.</h1>
+    <div class="gap-md"></div>
+    <p class="body">The Dock light will fade over the next ten minutes, then rest. Goodnight.</p>
+    <div class="spacer"></div>
+    <button class="action quiet" onclick="go('b5')">— continue to morning —</button>
+  </section>
+
+  <section class="screen" id="b5">
+    <div class="meta" id="b5Meta">FRIDAY 24 MAY</div>
+    <div class="gap-lg"></div>
+    <h1 class="headline" id="b5Headline">Last night,<br>No. 01.</h1>
+    <div class="gap-md"></div>
+    <p class="body" id="b5Body">Long Night, 30 minutes. The record is kept.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('home')">Tonight's sequence.</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('c1')">Index</button>
+  </section>
+
+  <!-- ===================== ZONE C — THE QUIET INDEX ===================== -->
+
+  <section class="screen" id="c1">
+    <div class="meta">INDEX</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Index.</h1>
+    <div class="gap-md"></div>
+    <ul class="rowlist">
+      <button class="row" onclick="go('c2')"><span class="row-name">Past nights</span></button>
+      <button class="row" onclick="go('c3')"><span class="row-name">Compositions</span></button>
+      <button class="row" onclick="go('c4')"><span class="row-name">Settings</span></button>
+      <button class="row" onclick="go('c5')"><span class="row-name">Subscription</span></button>
+    </ul>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C2 — past nights, populated from state -->
+  <section class="screen" id="c2">
+    <div class="meta">INDEX — PAST NIGHTS</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Past nights.</h1>
+    <div class="gap-sm"></div>
+    <p class="body">A record of the sequences you have used. Sona keeps the list and draws no conclusions from it.</p>
+    <div class="gap-md"></div>
+    <ul class="rowlist" id="pastList"></ul>
+    <p class="empty-note" id="pastEmpty" style="display:none;">No nights recorded yet. The first begins tonight.</p>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c3">
+    <div class="meta">INDEX — COMPOSITIONS</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Compositions.</h1>
+    <div class="gap-sm"></div>
+    <p class="body">Seven scent compositions in the series. A cycle of 28 nights is drawn from these, weighted to what you set up for.</p>
+    <div class="gap-md"></div>
+    <ul class="rowlist">
+      <button class="row" onclick="go('c3a')"><span class="row-num">NO. 01</span><span class="row-name">Long Night</span><span class="row-sub">For nights that resist ending.</span></button>
+      <button class="row" onclick="go('c3b')"><span class="row-num">NO. 02</span><span class="row-name">Still Mind</span><span class="row-sub">For a mind that will not set down the day.</span></button>
+      <button class="row" onclick="go('c3c')"><span class="row-num">NO. 03</span><span class="row-name">Across Time Zones</span><span class="row-sub">For a body that has landed before it has arrived.</span></button>
+      <button class="row" onclick="go('c3d')"><span class="row-num">NO. 04</span><span class="row-name">After a Hard Week</span><span class="row-sub">For the evening that has to undo five days.</span></button>
+      <button class="row" onclick="go('c3e')"><span class="row-num">NO. 05</span><span class="row-name">The Early Start</span><span class="row-sub">For a night that has to end before the body wants.</span></button>
+      <button class="row" onclick="go('c3f')"><span class="row-num">NO. 06</span><span class="row-name">A Restless Mind</span><span class="row-sub">For the body that turns over and will not settle.</span></button>
+      <button class="row" onclick="go('c3g')"><span class="row-num">NO. 07</span><span class="row-name">Slow Return</span><span class="row-sub">For evenings when the day does not leave all at once.</span></button>
+    </ul>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c3a">
+    <div class="meta">NO. 01</div><div class="gap-md"></div>
+    <h1 class="headline">Long Night.</h1><div class="gap-md"></div>
+    <p class="body">The first in the series, and the plainest. Long Night is for the evenings that will not close on their own — when the hour is late and the mind is still upright. It lengthens the descent, so that sleep is met rather than waited for.</p>
+    <div class="gap-md"></div><span class="field-label">The composition</span><div class="gap-xs"></div>
+    <ul class="ledger">
+      <li><span>Cedar</span><span class="amt">base</span></li>
+      <li><span>Iris</span><span class="amt">heart</span></li>
+      <li><span>Cool air, vetiver</span><span class="amt">top</span></li>
+      <li><span>Diffusion</span><span class="amt">slow, 30 min</span></li>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="credit">Composed by <em>Dr. Eve Marchetti</em>, sleep physiologist, with the Sona studio. Edinburgh, 2026.</p>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c3b">
+    <div class="meta">NO. 02</div><div class="gap-md"></div>
+    <h1 class="headline">Still Mind.</h1><div class="gap-md"></div>
+    <p class="body">For the nights when the body is tired but the mind keeps working — rehearsing tomorrow, re-reading today. Still Mind is the quietest composition in the series. It loosens the grip of attention, so the thinking slows of its own accord.</p>
+    <div class="gap-md"></div><span class="field-label">The composition</span><div class="gap-xs"></div>
+    <ul class="ledger">
+      <li><span>Moss</span><span class="amt">base</span></li>
+      <li><span>Bergamot</span><span class="amt">heart</span></li>
+      <li><span>Paper, dry stone</span><span class="amt">top</span></li>
+      <li><span>Diffusion</span><span class="amt">low, even</span></li>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="credit">Composed by <em>Dr. Eve Marchetti</em> with the Sona studio. Edinburgh, 2026.</p>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c3c">
+    <div class="meta">NO. 03</div><div class="gap-md"></div>
+    <h1 class="headline">Across<br>Time Zones.</h1><div class="gap-md"></div>
+    <p class="body">For the traveller whose body has landed before it has arrived. Across Time Zones works against the small disagreement between the clock on the wall and the clock within — a clear signal of which hour to believe.</p>
+    <div class="gap-md"></div><span class="field-label">The composition</span><div class="gap-xs"></div>
+    <ul class="ledger">
+      <li><span>Vetiver</span><span class="amt">base</span></li>
+      <li><span>Salt, citrus</span><span class="amt">heart</span></li>
+      <li><span>Cold mineral air</span><span class="amt">top</span></li>
+      <li><span>Diffusion</span><span class="amt">bright, then low</span></li>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="credit">Composed by <em>Dr. Eve Marchetti</em> with the Sona studio. Edinburgh, 2026.</p>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c3d">
+    <div class="meta">NO. 04</div><div class="gap-md"></div>
+    <h1 class="headline">After a<br>Hard Week.</h1><div class="gap-md"></div>
+    <p class="body">For the Friday evening that has to undo five days at once. After a Hard Week is the fullest composition in the series — built for the accumulated kind of tiredness, the kind that is in the shoulders as much as the eyes.</p>
+    <div class="gap-md"></div><span class="field-label">The composition</span><div class="gap-xs"></div>
+    <ul class="ledger">
+      <li><span>Sandalwood</span><span class="amt">base</span></li>
+      <li><span>Fig</span><span class="amt">heart</span></li>
+      <li><span>Rain, green air</span><span class="amt">top</span></li>
+      <li><span>Diffusion</span><span class="amt">full, warm</span></li>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="credit">Composed by <em>Dr. Eve Marchetti</em> with the Sona studio. Edinburgh, 2026.</p>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c3e">
+    <div class="meta">NO. 05</div><div class="gap-md"></div>
+    <h1 class="headline">The Early<br>Start.</h1><div class="gap-md"></div>
+    <p class="body">For the night that has to end before the body wants it to — an early flight, an early room, a morning that begins in the dark. The Early Start compresses the evening cleanly, without weight, so sleep arrives ahead of its usual hour.</p>
+    <div class="gap-md"></div><span class="field-label">The composition</span><div class="gap-xs"></div>
+    <ul class="ledger">
+      <li><span>White tea</span><span class="amt">base</span></li>
+      <li><span>Cool mint</span><span class="amt">heart</span></li>
+      <li><span>Linen, clean air</span><span class="amt">top</span></li>
+      <li><span>Diffusion</span><span class="amt">brisk, then still</span></li>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="credit">Composed by <em>Dr. Eve Marchetti</em> with the Sona studio. Edinburgh, 2026.</p>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c3f">
+    <div class="meta">NO. 06</div><div class="gap-md"></div>
+    <h1 class="headline">A Restless<br>Mind.</h1><div class="gap-md"></div>
+    <p class="body">For the body that turns over and will not settle — when the tiredness is real but the nerves have not caught up with it. A Restless Mind is the softest composition in the series, built to quiet the body before the thoughts are even addressed.</p>
+    <div class="gap-md"></div><span class="field-label">The composition</span><div class="gap-xs"></div>
+    <ul class="ledger">
+      <li><span>Warm amber</span><span class="amt">base</span></li>
+      <li><span>Lavender</span><span class="amt">heart</span></li>
+      <li><span>Chamomile, soft wood</span><span class="amt">top</span></li>
+      <li><span>Diffusion</span><span class="amt">low, enveloping</span></li>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="credit">Composed by <em>Dr. Eve Marchetti</em> with the Sona studio. Edinburgh, 2026.</p>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c3g">
+    <div class="meta">NO. 07</div><div class="gap-md"></div>
+    <h1 class="headline">Slow<br>Return.</h1><div class="gap-md"></div>
+    <p class="body">For evenings when the day does not leave all at once — when work has ended but its hold has not. Slow Return is the most gradual composition in the series. It does not close the day quickly; it lets it recede, one quiet degree at a time.</p>
+    <div class="gap-md"></div><span class="field-label">The composition</span><div class="gap-xs"></div>
+    <ul class="ledger">
+      <li><span>Oak, soft leather</span><span class="amt">base</span></li>
+      <li><span>Black tea</span><span class="amt">heart</span></li>
+      <li><span>Dusk air, dry herb</span><span class="amt">top</span></li>
+      <li><span>Diffusion</span><span class="amt">unhurried, tapering</span></li>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="credit">Composed by <em>Dr. Eve Marchetti</em> with the Sona studio. Edinburgh, 2026.</p>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c4">
+    <div class="meta">SETTINGS</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Settings.</h1>
+    <div class="gap-md"></div>
+    <ul class="rowlist">
+      <button class="row" onclick="go('a5')"><span class="row-num">01</span><span class="row-name">Ritual time and duration</span><span class="row-sub" id="c4timeRow">22:30, 30 minutes</span></button>
+      <button class="row" onclick="go('c4a')"><span class="row-num">02</span><span class="row-name">Notifications</span><span class="row-sub">1 reminder, nightly</span></button>
+      <button class="row" onclick="go('c4b')"><span class="row-num">03</span><span class="row-name">Data and privacy</span><span class="row-sub">Kept on this device. Nothing shared.</span></button>
+      <button class="row" onclick="go('c4c')"><span class="row-num">04</span><span class="row-name">The Dock</span><span class="row-sub">Connected</span></button>
+      <button class="row" onclick="go('c5')"><span class="row-num">05</span><span class="row-name">Subscription</span><span class="row-sub" id="c4subRow">28 nights per cycle</span></button>
+      <button class="row" onclick="go('a1')"><span class="row-num">06</span><span class="row-name">The Manual</span></button>
+      <button class="row" onclick="go('c4d')"><span class="row-num">07</span><span class="row-name">Help and support</span><span class="row-sub">The Dock, the subscription, contact</span></button>
+    </ul>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c4a">
+    <div class="meta">SETTINGS — NOTIFICATIONS</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Notifications.</h1>
+    <div class="gap-md"></div>
+    <p class="body">Two notifications, both operational — the nightly ritual reminder, and a notice when a cycle runs low. Nothing else: no encouragement, no streaks, no reminders to return.</p>
+    <div class="gap-md"></div>
+    <ul class="ledger">
+      <li><span>The nightly reminder</span><span class="amt" id="notifState">On</span></li>
+      <li><span>The reorder notice</span><span class="amt" id="reorderState">On</span></li>
+    </ul>
+    <div class="gap-sm"></div>
+    <button class="action quiet" id="notifToggle" onclick="toggleNotif()">— turn the nightly reminder off —</button>
+    <div class="gap-xs"></div>
+    <button class="action quiet" id="reorderToggle" onclick="toggleReorder()">— turn the reorder notice off —</button>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c4b">
+    <div class="meta">SETTINGS — DATA AND PRIVACY</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Data and<br>privacy.</h1>
+    <div class="gap-md"></div>
+    <p class="body">Sona keeps your record of nights on this device. It is not uploaded, not analysed, and not shared — not with Sona, not with anyone.</p>
+    <div class="gap-md"></div>
+    <ul class="ledger">
+      <li><span>Stored</span><span class="amt">This device only</span></li>
+      <li><span>Shared</span><span class="amt">Nothing</span></li>
+      <li><span>Account required</span><span class="amt">No</span></li>
+    </ul>
+    <div class="gap-sm"></div>
+    <button class="action quiet" onclick="go('c4data')">— export or delete the record —</button>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C4data — export or delete the record -->
+  <section class="screen" id="c4data">
+    <div class="meta">DATA AND PRIVACY — THE RECORD</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Your record.</h1>
+    <div class="gap-sm"></div>
+    <p class="body">The record is the list of nights Sona has kept. It is yours — take a copy, or remove it entirely.</p>
+    <div class="gap-md"></div>
+    <ul class="rowlist">
+      <button class="row" onclick="exportRecord()"><span class="row-name">Export the record</span><span class="row-sub">A copy is prepared for you to keep.</span></button>
+      <button class="row" onclick="go('c4delete')"><span class="row-name">Delete the record</span><span class="row-sub">Removes every night Sona has kept. This cannot be undone.</span></button>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="empty-note" id="exportNote" style="display:none;"></p>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C4delete — confirm deletion -->
+  <section class="screen" id="c4delete">
+    <div class="meta">THE RECORD — DELETE</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Delete the<br>record?</h1>
+    <div class="gap-md"></div>
+    <p class="body">Every night Sona has kept will be removed, and the app will return to its first evening. This cannot be undone.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="confirmDelete()">Delete the record.</button>
+    <div class="gap-md"></div>
+    <button class="action quiet" onclick="go('c4data')">— keep the record —</button>
+  </section>
+
+  <!-- C4deleted — deletion confirmed -->
+  <section class="screen" id="c4deleted">
+    <div class="meta">THE RECORD</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">The record<br>is deleted.</h1>
+    <div class="gap-md"></div>
+    <p class="body">Nothing is kept. Sona has returned to its first evening — the record will begin again whenever you are ready.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('home')">Begin again.</button>
+  </section>
+
+  <section class="screen" id="c4c">
+    <div class="meta">SETTINGS — THE DOCK</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">The Dock.</h1>
+    <div class="gap-md"></div>
+    <p class="body">The Dock is paired to this phone over Bluetooth. It reconnects on its own each evening; nothing here needs attention unless the connection is lost.</p>
+    <div class="gap-md"></div>
+    <ul class="ledger">
+      <li><span>Connection</span><span class="amt" id="c4cConn">Connected</span></li>
+      <li><span>Paired to</span><span class="amt" id="c4cPaired">This phone</span></li>
+      <li><span>Composition in well</span><span class="amt" id="c4cComp">None yet</span></li>
+      <li><span>Light</span><span class="amt">Resting</span></li>
+    </ul>
+    <div class="gap-sm"></div>
+    <button class="action quiet" id="c4cReconnect" onclick="go('a0pair')">— reconnect the Dock —</button>
+    <div class="gap-xs"></div>
+    <button class="action quiet" id="c4cDisconnect" onclick="disconnectDock()">— disconnect this Dock —</button>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C4d — Help and support hub -->
+  <section class="screen" id="c4d">
+    <div class="meta">SETTINGS — HELP AND SUPPORT</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Help and<br>support.</h1>
+    <div class="gap-sm"></div>
+    <p class="body">Most evenings need none of this. It is here for the ones that do.</p>
+    <div class="gap-md"></div>
+    <ul class="rowlist">
+      <button class="row" onclick="go('c4dock')"><span class="row-num">01</span><span class="row-name">The Dock won't respond</span><span class="row-sub">Connection and diffusion troubleshooting</span></button>
+      <button class="row" onclick="go('c4comp')"><span class="row-num">02</span><span class="row-name">A composition seems wrong</span><span class="row-sub">Damaged, missing, or not recognised</span></button>
+      <button class="row" onclick="go('c4deliv')"><span class="row-num">03</span><span class="row-name">Subscription and delivery</span><span class="row-sub">Tracking, late orders, address changes</span></button>
+      <button class="row" onclick="go('c4contact')"><span class="row-num">04</span><span class="row-name">Contact Sona</span><span class="row-sub">Speak to someone directly</span></button>
+    </ul>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C4dock — Dock troubleshooting -->
+  <section class="screen" id="c4dock">
+    <div class="meta">HELP — THE DOCK</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">If the Dock<br>won't respond.</h1>
+    <div class="gap-md"></div>
+    <p class="body">Three steps, in order. Most connections return at the first.</p>
+    <div class="gap-md"></div>
+    <ul class="rowlist">
+      <div class="row"><span class="row-num">01</span><span class="row-name">Bring the phone closer</span><span class="row-sub">The Dock connects over Bluetooth. Within a metre is enough.</span></div>
+      <div class="row"><span class="row-num">02</span><span class="row-name">Lift the composition out, and rest it back in</span><span class="row-sub">This prompts the Dock to read it again.</span></div>
+      <div class="row"><span class="row-num">03</span><span class="row-name">Reconnect from Dock settings</span><span class="row-sub">Settings — The Dock — reconnect. Pairing takes a moment.</span></div>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="body">If none of these settle it, the Dock may need attention. Contact Sona and someone will help.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('c4contact')">Contact Sona.</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C4contact — contact Sona -->
+  <section class="screen" id="c4contact">
+    <div class="meta">HELP — CONTACT SONA</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Contact<br>Sona.</h1>
+    <div class="gap-md"></div>
+    <p class="body">A small team, in Edinburgh. We answer within one working day.</p>
+    <div class="gap-md"></div>
+    <ul class="ledger">
+      <li><span>By email</span><span class="amt">help@sona.studio</span></li>
+      <li><span>By phone</span><span class="amt">0131 555 0﻿100</span></li>
+      <li><span>Hours</span><span class="amt">Mon–Fri, 9–17</span></li>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="body">Have your cycle number to hand if the question is about a delivery — you will find it on the composition box.</p>
+    <div class="spacer"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C4deliv — subscription and delivery help -->
+  <section class="screen" id="c4deliv">
+    <div class="meta">HELP — SUBSCRIPTION AND DELIVERY</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Subscription<br>and delivery.</h1>
+    <div class="gap-md"></div>
+    <p class="body">The common questions about orders on their way, and how to change one.</p>
+    <div class="gap-md"></div>
+    <ul class="rowlist">
+      <div class="row"><span class="row-num">01</span><span class="row-name">Where is my order?</span><span class="row-sub">Orders arrive within five days. The expected date is shown on your subscription and on the order confirmation. If you need to trace it, write to Sona below.</span></div>
+      <div class="row"><span class="row-num">02</span><span class="row-name">My order is late</span><span class="row-sub">If the expected date has passed, write to Sona below with your cycle number and we will trace it.</span></div>
+      <button class="row" onclick="go('c5addr')"><span class="row-num">03</span><span class="row-name">Change the delivery address</span><span class="row-sub">An address not yet dispatched can still be changed. Update it here.</span></button>
+      <button class="row" onclick="go('c5cycle')"><span class="row-num">04</span><span class="row-name">Pause or change the cycle</span><span class="row-sub">Pause deliveries, or re-weight the cycle to a different need.</span></button>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="body">For anything not covered here, write to Sona.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('c4write')">Write to Sona.</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C4comp — a composition seems wrong -->
+  <section class="screen" id="c4comp">
+    <div class="meta">HELP — COMPOSITIONS</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">If a composition<br>seems wrong.</h1>
+    <div class="gap-md"></div>
+    <p class="body">The common causes, and what each one needs.</p>
+    <div class="gap-md"></div>
+    <ul class="rowlist">
+      <div class="row"><span class="row-num">01</span><span class="row-name">The Dock does not recognise it</span><span class="row-sub">Lift it out and rest it back in the well. If it still will not read, the composition may be damaged.</span></div>
+      <div class="row"><span class="row-num">02</span><span class="row-name">It is physically damaged</span><span class="row-sub">A cracked or crushed composition can be replaced. Write to us and the next delivery will include it.</span></div>
+      <div class="row"><span class="row-num">03</span><span class="row-name">One is missing from the box</span><span class="row-sub">Check the cycle count on the box sleeve. If the box was short, tell us and we will correct it.</span></div>
+    </ul>
+    <div class="gap-md"></div>
+    <p class="body">If none of these is the case, write to Sona and the team will look into it.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('c4write')">Write to Sona.</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C4write — write to Sona (demo message form) -->
+  <section class="screen" id="c4write">
+    <div class="meta">HELP — WRITE TO SONA</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Write to<br>Sona.</h1>
+    <div class="gap-sm"></div>
+    <p class="body">Tell us what happened. The team answers within one working day.</p>
+    <div class="gap-md"></div>
+    <span class="msg-label">SUBJECT</span>
+    <div class="gap-xs"></div>
+    <input class="msg-field" id="msgSubject" type="text" placeholder="A composition seems wrong">
+    <div class="gap-md"></div>
+    <span class="msg-label">YOUR MESSAGE</span>
+    <div class="gap-xs"></div>
+    <textarea class="msg-area" id="msgBody" placeholder="What happened, and which composition — its number if you have it."></textarea>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('c4sent')">Send to Sona.</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C4sent — message sent confirmation -->
+  <section class="screen" id="c4sent">
+    <div class="meta">HELP</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Your message<br>is with Sona.</h1>
+    <div class="gap-md"></div>
+    <p class="body">The team answers within one working day, by email. There is nothing else you need to do.</p>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('c4d')">Back to help.</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <section class="screen" id="c5">
+    <div class="meta">INDEX — SUBSCRIPTION</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Your<br>compositions.</h1>
+    <div class="gap-md"></div>
+    <p class="body">28 nights to a cycle, drawn from the seven compositions and weighted to what you set up for.</p>
+    <div class="gap-xs"></div>
+    <p class="empty-note" id="c5Low" style="display:none;"></p>
+    <div class="gap-md"></div>
+    <ul class="ledger">
+      <li><span>This cycle</span><span class="amt" id="c5Cycle">Sleep</span></li>
+      <li><span>Chosen</span><span class="amt">At setup — changeable</span></li>
+      <li><span>Nights remaining</span><span class="amt" id="c5Remaining">28</span></li>
+      <li><span>Next delivery</span><span class="amt" id="c5Delivery">14 June</span></li>
+      <li><span>Per cycle</span><span class="amt">£54</span></li>
+    </ul>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('c5renew')">Renew or order a cycle.</button>
+    <div class="gap-md"></div>
+    <button class="action quiet" onclick="go('c5cycle')">— pause or change the cycle —</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C5cycle — pause or change the cycle -->
+  <section class="screen" id="c5cycle">
+    <div class="meta">SUBSCRIPTION — THE CYCLE</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Pause, or<br>change it.</h1>
+    <div class="gap-sm"></div>
+    <p class="body">Your cycle is weighted to one need. You can change which, or pause deliveries without losing the cycle.</p>
+    <div class="gap-md"></div>
+    <span class="field-label">WEIGHT THE CYCLE TOWARD</span>
+    <div class="gap-sm"></div>
+    <ul class="option-list is-untouched" id="cycleNeedList">
+      <li class="option" data-v="Sleep" onclick="pickCycleNeed(this)"><span class="num">01</span><span class="label">Sleep</span></li>
+      <li class="option" data-v="Stress" onclick="pickCycleNeed(this)"><span class="num">02</span><span class="label">Stress</span></li>
+      <li class="option" data-v="Daily ritual" onclick="pickCycleNeed(this)"><span class="num">03</span><span class="label">Daily ritual</span></li>
+    </ul>
+    <div class="gap-md"></div>
+    <button class="action" onclick="saveCycleNeed()">Save the cycle.</button>
+    <div class="gap-md"></div>
+    <button class="action quiet" id="pauseToggle" onclick="togglePause()">— pause deliveries —</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C5renew — renewal / checkout -->
+  <section class="screen" id="c5renew">
+    <div class="meta">SUBSCRIPTION — RENEW</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Order the<br>next cycle.</h1>
+    <div class="gap-md"></div>
+    <ul class="ledger">
+      <li><span>28 compositions</span><span class="amt" id="renewCycleName">Sleep cycle</span></li>
+      <li><span>Arrives</span><span class="amt" id="renewArrives">within 5 days</span></li>
+      <li><span>Total</span><span class="amt">£54</span></li>
+    </ul>
+    <div class="gap-md"></div>
+    <span class="field-label">DELIVERY</span>
+    <div class="gap-xs"></div>
+    <div id="renewDelivery"></div>
+    <div class="gap-md"></div>
+    <span class="field-label">PAYMENT</span>
+    <div class="gap-xs"></div>
+    <div id="renewPayment"></div>
+    <div class="spacer"></div>
+    <button class="action" id="renewAction" onclick="renewProceed()">Confirm the order.</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C5card — demo card entry (first-time, no card on file) -->
+  <section class="screen" id="c5card">
+    <div class="meta">RENEW — PAYMENT</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Add a<br>payment card.</h1>
+    <div class="gap-sm"></div>
+    <p class="empty-note">A demonstration screen — this prototype takes no real card details.</p>
+    <div class="gap-md"></div>
+    <span class="msg-label">CARD NUMBER</span>
+    <div class="gap-xs"></div>
+    <input class="msg-field" id="cardNum" type="text" value="4242 4242 4242 4242">
+    <div class="gap-md"></div>
+    <span class="msg-label">NAME ON CARD</span>
+    <div class="gap-xs"></div>
+    <input class="msg-field" id="cardName" type="text" placeholder="As printed on the card">
+    <div class="gap-md"></div>
+    <span class="msg-label">EXPIRY &nbsp;·&nbsp; SECURITY</span>
+    <div class="gap-xs"></div>
+    <input class="msg-field" id="cardExp" type="text" value="12 / 28        •••">
+    <div class="spacer"></div>
+    <button class="action" onclick="saveCard()">Save this card.</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C5addr — delivery address (demo, save/edit) -->
+  <section class="screen" id="c5addr">
+    <div class="meta">RENEW — DELIVERY</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Delivery<br>address.</h1>
+    <div class="gap-sm"></div>
+    <p class="empty-note">A demonstration screen — placeholder details, no real address stored.</p>
+    <div class="gap-md"></div>
+    <span class="msg-label">NAME</span>
+    <div class="gap-xs"></div>
+    <input class="msg-field" id="addrName" type="text" value="A. Reader">
+    <div class="gap-md"></div>
+    <span class="msg-label">ADDRESS</span>
+    <div class="gap-xs"></div>
+    <input class="msg-field" id="addrLine" type="text" value="14 Rasburn Street">
+    <div class="gap-md"></div>
+    <span class="msg-label">CITY</span>
+    <div class="gap-xs"></div>
+    <input class="msg-field" id="addrCity" type="text" value="Manchester">
+    <div class="gap-md"></div>
+    <span class="msg-label">POSTCODE</span>
+    <div class="gap-xs"></div>
+    <input class="msg-field" id="addrPost" type="text" value="M1 4DZ">
+    <div class="spacer"></div>
+    <button class="action" onclick="saveAddress()">Save this address.</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+  <!-- C5charge — charge confirmation (light, before payment is taken) -->
+  <section class="screen" id="c5charge">
+    <div class="meta">RENEW — CONFIRM</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">Confirm the<br>charge.</h1>
+    <div class="gap-md"></div>
+    <p class="body" id="c5chargeBody">This is what will happen when you confirm. Nothing is charged until then.</p>
+    <div class="gap-md"></div>
+    <ul class="ledger">
+      <li><span>28 compositions</span><span class="amt" id="chargeCycle">Sleep cycle</span></li>
+      <li><span>Delivered to</span><span class="amt" id="chargeTo">Manchester M1 4DZ</span></li>
+      <li><span>Expected delivery</span><span class="amt" id="chargeArrives">by 28 May</span></li>
+      <li><span>Cycle ends</span><span class="amt" id="chargeEnds">20 June</span></li>
+      <li><span>Charged to</span><span class="amt" id="chargeCard">Visa ending 4242</span></li>
+      <li><span>Amount</span><span class="amt">£54.00</span></li>
+    </ul>
+    <div class="spacer"></div>
+    <button class="action" onclick="placeOrder()">Confirm and pay £54.</button>
+    <div class="gap-md"></div>
+    <button class="action quiet" onclick="go('c5renew')">— review the order —</button>
+  </section>
+
+  <!-- C5done — order placed (dark, ceremonial, with resolution tone) -->
+  <section class="screen" id="c5done">
+    <div class="meta">SUBSCRIPTION</div>
+    <div class="gap-md"></div>
+    <h1 class="headline">The order<br>is placed.</h1>
+    <div class="gap-md"></div>
+    <p class="body">£54 has been charged. Twenty-eight compositions are on their way — the record continues without interruption.</p>
+    <div class="gap-md"></div>
+    <ul class="ledger">
+      <li><span>Charged</span><span class="amt">£54.00</span></li>
+      <li><span>Cycle</span><span class="amt" id="doneCycle">Sleep</span></li>
+      <li><span>Expected delivery</span><span class="amt" id="doneArrives">by 28 May</span></li>
+      <li><span>Cycle ends</span><span class="amt" id="doneEnds">20 June</span></li>
+    </ul>
+    <div class="spacer"></div>
+    <button class="action" onclick="go('c5')">Back to subscription.</button>
+    <div class="gap-md"></div>
+    <button class="indexmark" onclick="go('home')">Home</button>
+  </section>
+
+</div>
+
+<script>
+  /* ===============================================================
+     STATE MODEL — the prototype tracks real state.
+     Resets on reload: every visitor begins as a first-time user.
+     =============================================================== */
+  const COMPOSITIONS=[
+    {n:'01', name:'Long Night',        seq:'NO. 01 — LONG NIGHT'},
+    {n:'02', name:'Still Mind',        seq:'NO. 02 — STILL MIND'},
+    {n:'03', name:'Across Time Zones', seq:'NO. 03 — ACROSS TIME ZONES'},
+    {n:'04', name:'After a Hard Week', seq:'NO. 04 — AFTER A HARD WEEK'},
+    {n:'05', name:'The Early Start',   seq:'NO. 05 — THE EARLY START'},
+    {n:'06', name:'A Restless Mind',   seq:'NO. 06 — A RESTLESS MIND'},
+    {n:'07', name:'Slow Return',       seq:'NO. 07 — SLOW RETURN'}
+  ];
+  /* a cycle is a curated, weighted 28-night order — not 28 of one thing.
+     the need biases the weighting; every composition still appears.
+     the opening nights are deliberately varied so the cycle is visible.
+     index 6 (Slow Return) is a gentle general composition — fits all cycles. */
+  const CYCLE_WEIGHTS={
+    'Sleep':       [0,2,6,1,5,3,0,4,6,1,2,0,3,6,4,1,0,5,2,6,3,1,4,0,6,2,5,0],
+    'Stress':      [1,3,5,6,1,3,6,5,3,1,6,3,5,1,6,3,5,1,6,3,5,6,0,2,4,1,3,6],
+    'Daily ritual':[0,1,2,3,4,5,6,1,2,3,4,5,6,0,2,3,4,5,6,1,3,4,5,6,0,2,4,6]
+  };
+  const state={
+    need:'Sleep',
+    hour:22, min:30,
+    duration:30,        /* the default ritual length */
+    tonightDuration:null, /* one-night override; null = use default */
+    cycle:[],           /* array of 28 composition-indexes */
+    nightsCompleted:0,
+    pastNights:[],      /* {date, name, n, duration} newest-first */
+    tonightComp:null,   /* composition index for tonight (cycle or override) */
+    overridden:false,
+    cardOnFile:false,   /* has a payment card been added */
+    cardLast4:'',       /* last four digits of the saved card */
+    paused:false,       /* deliveries paused */
+    pendingNeed:null,   /* cycle-need choice awaiting save on c5cycle */
+    addressOnFile:false,/* has a delivery address been added */
+    address:{name:'',line:'',city:'',postcode:''}
+  };
+  /* the length tonight actually runs at */
+  function effectiveDuration(){
+    return state.tonightDuration!==null?state.tonightDuration:state.duration;
+  }
+
+  /* dates advance from 23 May as nights complete */
+  const DAYS=['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'];
+  function dateFor(offset){
+    /* 23 May 2026 is a Saturday; index by offset */
+    const base=23+offset;
+    const dayName=DAYS[(5+offset)%7]; /* 23 May = Saturday */
+    return {label:dayName+' '+base+' MAY', short:base+' MAY'};
+  }
+
+  function buildCycle(){
+    state.cycle=CYCLE_WEIGHTS[state.need].slice();
+  }
+  function compositionsRemaining(){ return 28-state.nightsCompleted; }
+  function tonightFromCycle(){ return state.cycle[state.nightsCompleted % 28]; }
+
+  /* ---- screens that refresh from state when shown --------------- */
+  function refreshHome(){
+    const d=dateFor(state.nightsCompleted);
+    const remaining=compositionsRemaining();
+    document.getElementById('homeMeta').textContent=
+      d.label+' — '+remaining+' COMPOSITIONS LEFT';
+    const compIdx=state.tonightComp!==null?state.tonightComp:tonightFromCycle();
+    const comp=COMPOSITIONS[compIdx];
+    if(state.nightsCompleted===0){
+      document.getElementById('homeHeadline').innerHTML='Nothing<br>recorded yet.';
+      document.getElementById('homeBody').textContent=
+        'Your first sequence is set for tonight. The record begins after it.';
+      document.getElementById('homeAction').textContent="See tonight's sequence.";
+      document.getElementById('homeLast').style.display='none';
+    }else{
+      document.getElementById('homeHeadline').textContent=comp.name+'.';
+      document.getElementById('homeBody').textContent=
+        "Tonight's sequence. "+effectiveDuration()+' minutes, beginning whenever you are ready.';
+      document.getElementById('homeAction').textContent='Begin tonight\u2019s sequence.';
+      const last=state.pastNights[0];
+      const hl=document.getElementById('homeLast');
+      hl.style.display='block';
+      hl.textContent='Last night — No. '+last.n+', '+last.name+', '+last.duration+' minutes.';
+    }
+    /* late-time short-descent acknowledgement — surfaces from Home */
+    const lateEl=document.getElementById('homeLate');
+    if(state.hour>=23){
+      lateEl.style.display='block';
+      lateEl.textContent='Your ritual is set for a late hour. A ten-minute setting is available tonight — the same ritual, compressed.';
+    }else{
+      lateEl.style.display='none';
+    }
+    /* low-composition reorder notice — surfaces from Home */
+    const lowEl=document.getElementById('homeLow');
+    const left=compositionsRemaining();
+    if(left<=LOW_THRESHOLD){
+      lowEl.style.display='block';
+      lowEl.textContent=left===0
+        ? 'Your compositions are finished. Order the next cycle from the Index.'
+        : left+' '+(left===1?'composition remains':'compositions remain')+
+          '. It is time to order the next cycle.';
+    }else{
+      lowEl.style.display='none';
+    }
+  }
+
+  function refreshB2(){
+    const compIdx=state.tonightComp!==null?state.tonightComp:tonightFromCycle();
+    const comp=COMPOSITIONS[compIdx];
+    state.tonightComp=compIdx;
+    document.getElementById('b2Meta').textContent='TONIGHT — NO. '+comp.n;
+    const nightNo=state.nightsCompleted+1;
+    document.getElementById('b2Body').textContent=
+      'No. '+comp.n+', '+comp.name+'. '+
+      (state.overridden
+        ? 'Chosen for tonight.'
+        : 'The '+ordinal(nightNo)+' night of your '+state.need.toLowerCase()+' cycle.')+
+      ' Rest it in the well of the Dock.';
+    /* tonight's length — notes when it differs from the usual */
+    const lenEl=document.getElementById('b2Length');
+    if(state.tonightDuration!==null && state.tonightDuration!==state.duration){
+      lenEl.textContent='Tonight — '+state.tonightDuration+
+        ' minutes, in place of your usual '+state.duration+'.';
+    }else{
+      lenEl.textContent='Tonight — '+state.duration+' minutes.';
+    }
+    document.getElementById('recogniseMark').textContent=
+      'Composition recognised — '+comp.name;
+    resetComposition();
+  }
+  function ordinal(n){
+    const s=['th','st','nd','rd'], v=n%100;
+    return n+(s[(v-20)%10]||s[v]||s[0]);
+  }
+
+  function refreshB2alt(){
+    const list=document.getElementById('b2altList');
+    list.innerHTML='';
+    COMPOSITIONS.forEach((c,i)=>{
+      const b=document.createElement('button');
+      b.className='row';
+      b.innerHTML='<span class="row-num">NO. '+c.n+'</span>'+
+                  '<span class="row-name">'+c.name+'</span>';
+      b.onclick=()=>{ state.tonightComp=i; state.overridden=true; go('b2'); };
+      list.appendChild(b);
+    });
+  }
+
+  function refreshPast(){
+    const list=document.getElementById('pastList');
+    const empty=document.getElementById('pastEmpty');
+    list.innerHTML='';
+    if(state.pastNights.length===0){
+      empty.style.display='block';
+      return;
+    }
+    empty.style.display='none';
+    state.pastNights.forEach(p=>{
+      const row=document.createElement('div');
+      row.className='row recorded';
+      row.innerHTML='<span class="row-num">'+p.date+'</span>'+
+        '<span class="row-name">'+p.name+'</span>'+
+        '<span class="edition">NO. '+p.n+'</span>'+
+        '<span class="row-sub">'+
+        (p.duration===10?'Short descent — 10 minutes':p.duration+' minutes')+
+        '</span>';
+      list.appendChild(row);
+    });
+  }
+
+  function refreshB5(){
+    const last=state.pastNights[0];
+    const d=dateFor(state.nightsCompleted); /* morning after */
+    document.getElementById('b5Meta').textContent=d.label;
+    document.getElementById('b5Headline').innerHTML='Last night,<br>No. '+last.n+'.';
+    document.getElementById('b5Body').textContent=
+      last.name+', '+last.duration+' minutes. The record is kept.';
+  }
+
+  /* ---- Subscription, renewal, cycle, payment -------------------- */
+  const CYCLE_PRICE=54;
+  const LOW_THRESHOLD=5;   /* compositions remaining at which we warn */
+
+  function refreshSubscription(){
+    document.getElementById('c5Cycle').textContent=
+      state.need + (state.paused ? ' — paused' : '');
+    document.getElementById('c5Remaining').textContent=compositionsRemaining();
+    /* low-composition reorder line */
+    const low=document.getElementById('c5Low');
+    const left=compositionsRemaining();
+    if(left<=LOW_THRESHOLD){
+      low.style.display='block';
+      low.textContent=left===0
+        ? 'This cycle is finished. Order the next to continue.'
+        : left+' '+(left===1?'composition remains':'compositions remain')+
+          ' in this cycle. It is time to order the next.';
+    }else{
+      low.style.display='none';
+    }
+  }
+
+  function refreshCycleScreen(){
+    /* preselect the current need */
+    const list=document.getElementById('cycleNeedList');
+    list.classList.remove('is-untouched');
+    document.querySelectorAll('#cycleNeedList .option').forEach(o=>{
+      o.classList.toggle('is-selected', o.dataset.v===state.need);
+    });
+    state.pendingNeed=state.need;
+    document.getElementById('pauseToggle').textContent=
+      state.paused ? '— resume deliveries —' : '— pause deliveries —';
+  }
+  function pickCycleNeed(el){
+    document.querySelectorAll('#cycleNeedList .option').forEach(o=>o.classList.remove('is-selected'));
+    el.classList.add('is-selected');
+    state.pendingNeed=el.dataset.v;
+  }
+  function saveCycleNeed(){
+    if(state.pendingNeed && state.pendingNeed!==state.need){
+      state.need=state.pendingNeed;
+      buildCycle();   /* a changed need re-weights the cycle */
+    }
+    /* origin-aware: from the delivery-help screen, return there */
+    if(history.includes('c4deliv')){
+      history=history.slice(0, history.indexOf('c4deliv')+1);
+      go('c4deliv',true);
+    }else{
+      go('c5');
+    }
+  }
+  function togglePause(){
+    state.paused=!state.paused;
+    document.getElementById('pauseToggle').textContent=
+      state.paused ? '— resume deliveries —' : '— pause deliveries —';
+  }
+
+  /* --- order dates: delivery is near; the cycle ends 28 nights on --- */
+  const MONTHS=['January','February','March','April','May','June','July',
+                'August','September','October','November','December'];
+  function dateLabel(daysFromBase){
+    /* base is 23 May 2026; returns e.g. "28 May" or "3 July" */
+    const base=new Date(2026,4,23);
+    const d=new Date(base.getTime()+daysFromBase*86400000);
+    return d.getDate()+' '+MONTHS[d.getMonth()];
+  }
+  function deliveryDate(){
+    /* a near date — ~5 days from the current night in the demo */
+    return dateLabel(state.nightsCompleted+5);
+  }
+  function cycleEndDate(){
+    /* 28 nights of ritual from the current point */
+    return dateLabel(state.nightsCompleted+28);
+  }
+
+  function addressSummary(){
+    const a=state.address;
+    return a.name+', '+a.line+', '+a.city+' '+a.postcode;
+  }
+
+  function refreshRenew(){
+    document.getElementById('renewCycleName').textContent=state.need+' cycle';
+    document.getElementById('renewArrives').textContent='by '+deliveryDate();
+
+    /* delivery block — reflects whether an address is on file */
+    const del=document.getElementById('renewDelivery');
+    if(state.addressOnFile){
+      del.innerHTML=
+        '<ul class="ledger"><li><span>To</span>'+
+        '<span class="amt">'+state.address.city+' '+state.address.postcode+'</span></li></ul>'+
+        '<div class="gap-xs"></div>'+
+        '<button class="action quiet" onclick="go(\'c5addr\')">— edit the address —</button>';
+    }else{
+      del.innerHTML=
+        '<p class="empty-note">No delivery address yet.</p>'+
+        '<div class="gap-xs"></div>'+
+        '<button class="action quiet" onclick="go(\'c5addr\')">— add a delivery address —</button>';
+    }
+
+    /* payment block — reflects whether a card is on file */
+    const pay=document.getElementById('renewPayment');
+    if(state.cardOnFile){
+      pay.innerHTML=
+        '<ul class="ledger"><li><span>Card</span>'+
+        '<span class="amt">Visa ending '+state.cardLast4+'</span></li></ul>'+
+        '<div class="gap-xs"></div>'+
+        '<button class="action quiet" onclick="go(\'c5card\')">— use a different card —</button>';
+    }else{
+      pay.innerHTML='<p class="empty-note">No card on file yet.</p>';
+    }
+
+    /* the action label names whatever is still missing */
+    const act=document.getElementById('renewAction');
+    if(!state.addressOnFile)   act.textContent='Add a delivery address.';
+    else if(!state.cardOnFile) act.textContent='Add a payment card.';
+    else                       act.textContent='Confirm the order.';
+  }
+  function renewProceed(){
+    /* an order needs a destination, then a card, then confirmation */
+    if(!state.addressOnFile){ go('c5addr'); return; }
+    if(!state.cardOnFile){ go('c5card'); return; }
+    go('c5charge');
+  }
+  function saveAddress(){
+    state.address={
+      name:(document.getElementById('addrName').value||'A. Reader'),
+      line:(document.getElementById('addrLine').value||'14 Rasburn Street'),
+      city:(document.getElementById('addrCity').value||'Manchester'),
+      postcode:(document.getElementById('addrPost').value||'M1 4DZ')
+    };
+    state.addressOnFile=true;
+    /* origin-aware: from the delivery-help screen, return there;
+       otherwise this is the checkout flow — go back to the order */
+    if(history.includes('c4deliv')){
+      history=history.slice(0, history.indexOf('c4deliv')+1);
+      go('c4deliv',true);
+    }else{
+      go('c5renew');
+    }
+  }
+  function refreshCharge(){
+    document.getElementById('chargeCycle').textContent=state.need+' cycle';
+    document.getElementById('chargeCard').textContent='Visa ending '+state.cardLast4;
+    document.getElementById('chargeArrives').textContent='by '+deliveryDate();
+    document.getElementById('chargeEnds').textContent=cycleEndDate();
+    document.getElementById('chargeTo').textContent=
+      state.address.city+' '+state.address.postcode;
+  }
+  function refreshDone(){
+    document.getElementById('doneCycle').textContent=state.need;
+    document.getElementById('doneArrives').textContent='by '+deliveryDate();
+    document.getElementById('doneEnds').textContent=cycleEndDate();
+  }
+  /* placing the order — the dark screen, with one soft resolution tone */
+  function placeOrder(){
+    go('c5done');
+    playResolutionTone();
+  }
+  /* a single low, warm note — fades in and out once. respects mute. */
+  function playResolutionTone(){
+    if(!soundOn) return;
+    try{
+      const ctx=new (window.AudioContext||window.webkitAudioContext)();
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.type='sine';
+      osc.frequency.value=146.83;          /* a low, warm D */
+      gain.gain.value=0;
+      osc.connect(gain); gain.connect(ctx.destination);
+      const t=ctx.currentTime;
+      gain.gain.linearRampToValueAtTime(0.22, t+0.6);   /* fade in */
+      gain.gain.linearRampToValueAtTime(0,    t+2.2);   /* fade out */
+      osc.start(t);
+      osc.stop(t+2.4);
+      osc.onended=()=>{ try{ctx.close();}catch(e){} };
+    }catch(e){ /* audio unavailable — silent, no error */ }
+  }
+  function saveCard(){
+    /* demo only — capture the last four for display, nothing transmitted */
+    const num=(document.getElementById('cardNum').value||'').replace(/\D/g,'');
+    state.cardLast4 = num.slice(-4) || '4242';
+    state.cardOnFile=true;
+    go('c5renew');
+  }
+
+  function refreshSettings(){
+    const hh=String(state.hour).padStart(2,'0'),mm=String(state.min).padStart(2,'0');
+    document.getElementById('c4timeRow').textContent=hh+':'+mm+', '+state.duration+' minutes';
+    document.getElementById('c4subRow').textContent=compositionsRemaining()+' nights remaining';
+  }
+  function refreshDockSettings(){
+    const compIdx=state.tonightComp!==null?state.tonightComp:tonightFromCycle();
+    const conn=document.getElementById('c4cConn');
+    const paired=document.getElementById('c4cPaired');
+    const comp=document.getElementById('c4cComp');
+    const disc=document.getElementById('c4cDisconnect');
+    const recon=document.getElementById('c4cReconnect');
+    if(dockPaired){
+      conn.textContent='Connected';
+      paired.textContent='This phone';
+      comp.textContent='No. '+COMPOSITIONS[compIdx].n+', '+COMPOSITIONS[compIdx].name;
+      disc.style.display='block';
+      recon.textContent='— reconnect the Dock —';
+    }else{
+      conn.textContent='Not connected';
+      paired.textContent='No Dock paired';
+      comp.textContent='—';
+      disc.style.display='none';
+      recon.textContent='— pair a Dock —';
+    }
+  }
+  /* disconnecting forgets the pairing; the Dock can be paired again later */
+  function disconnectDock(){
+    dockPaired=false;
+    refreshDockSettings();
+  }
+
+  /* ---- the record: export (demo) and delete (resets prototype) -- */
+  function exportRecord(){
+    const n=state.pastNights.length;
+    const note=document.getElementById('exportNote');
+    note.style.display='block';
+    note.textContent = n===0
+      ? 'There are no nights to export yet. The record begins after your first sequence.'
+      : 'A copy of '+n+' '+(n===1?'night':'nights')+
+        ' has been prepared — sona-record.txt. It is yours to keep.';
+  }
+  function confirmDelete(){
+    /* clear every kept night and return the app to its first evening */
+    state.nightsCompleted=0;
+    state.pastNights=[];
+    state.tonightComp=null;
+    state.tonightDuration=null;
+    state.overridden=false;
+    /* reset the navigation history so the demo is genuinely fresh */
+    history=['c4deleted'];
+    go('c4deleted',true);
+  }
+
+  /* ===============================================================
+     NAVIGATION — history stack
+     =============================================================== */
+  let history=['a0'];
+  const NO_BACK=['a0','a1','home','b3','b4','b5','a7','bpause','c5done'];
+
+  function go(id,isBack){
+    /* refresh dynamic screens before showing */
+    if(id==='a7') writeA7();
+    if(id==='a5'||id==='a6') labelSetupCTAs();
+    if(id==='a5') setTimeout(refreshPicker,30);
+    if(id==='a0pair') refreshPair();
+    if(id==='home') refreshHome();
+    if(id==='b2') refreshB2();
+    if(id==='b2len') refreshB2len();
+    if(id==='b2alt') refreshB2alt();
+    if(id==='b5') refreshB5();
+    if(id==='c2') refreshPast();
+    if(id==='c5') refreshSubscription();
+    if(id==='c5cycle') refreshCycleScreen();
+    if(id==='c5renew') refreshRenew();
+    if(id==='c5charge') refreshCharge();
+    if(id==='c5done') refreshDone();
+    if(id==='c4') refreshSettings();
+    if(id==='c4c') refreshDockSettings();
+
+    if(!isBack && id!==current()) history.push(id);
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('is-active'));
+    const el=document.getElementById(id);
+    el.classList.add('is-active');
+    el.scrollTop=0;
+    updateBackAffordance(id);
+  }
+  function current(){ return history[history.length-1]; }
+  function back(){
+    if(history.length<2) return;
+    history.pop();
+    go(current(),true);
+  }
+  function updateBackAffordance(id){
+    const el=document.getElementById(id);
+    const mark=el.querySelector('.backmark');
+    if(!mark) return;
+    mark.style.display=(NO_BACK.includes(id)||history.length<2)?'none':'block';
+  }
+
+  /* ---- A0-pair: the Dock connection, witnessed once ------------- */
+  let dockPaired=false;
+  function refreshPair(){
+    const head=document.getElementById('pairHeadline');
+    const body=document.getElementById('pairBody');
+    const mark=document.getElementById('pairMark');
+    const act=document.getElementById('pairAction');
+    if(dockPaired){
+      head.innerHTML='The Dock<br>is here.';
+      body.textContent='Sona has found your Dock and connected to it. This happens once — from now on it reconnects on its own, each evening.';
+      mark.classList.add('shown');
+      act.disabled=false;
+      act.textContent=history.includes('c4')?'Done.':'Continue.';
+      return;
+    }
+    head.innerHTML='Finding<br>the Dock.';
+    body.textContent='Sona connects to the Dock directly, over Bluetooth — no account, no network. Keep the phone near the Dock for a moment.';
+    mark.classList.remove('shown');
+    act.disabled=true;
+    setTimeout(()=>{
+      if(current()!=='a0pair') return;
+      dockPaired=true;
+      head.innerHTML='The Dock<br>is here.';
+      body.textContent='Sona has found your Dock and connected to it. This happens once — from now on it reconnects on its own, each evening.';
+      mark.classList.add('shown');
+      act.disabled=false;
+      act.textContent=history.includes('c4')?'Done.':'Continue.';
+    },2200);
+  }
+
+  /* pairing-screen Continue: setup flow continues; reconnect returns to Settings */
+  function advanceFromPair(){
+    if(history.includes('c4')){
+      history=history.slice(0, history.indexOf('c4')+1);
+      go('c4',true);
+      return;
+    }
+    go('a4');
+  }
+
+  /* ---- A4 need selection ---------------------------------------- */
+  function pick(el){
+    document.getElementById('optList').classList.remove('is-untouched');
+    document.querySelectorAll('#optList .option').forEach(o=>o.classList.remove('is-selected'));
+    el.classList.add('is-selected');
+    state.need=el.dataset.v;
+    document.getElementById('a4action').disabled=false;
+  }
+
+  /* ---- A5 scrollable time picker — every minute selectable ------ */
+  const ITEM_H=40;
+  let pickerBuilt=false;
+  function buildPicker(){
+    const hCol=document.getElementById('pickHour');
+    const mCol=document.getElementById('pickMin');
+    /* hours 0–23, minutes 0–59 */
+    let hHtml='<div class="picker-pad"></div>';
+    for(let h=0;h<24;h++){
+      hHtml+='<div class="picker-item" data-v="'+h+'">'+String(h).padStart(2,'0')+'</div>';
+    }
+    hHtml+='<div class="picker-pad"></div>';
+    let mHtml='<div class="picker-pad"></div>';
+    for(let m=0;m<60;m++){
+      mHtml+='<div class="picker-item" data-v="'+m+'">'+String(m).padStart(2,'0')+'</div>';
+    }
+    mHtml+='<div class="picker-pad"></div>';
+    hCol.innerHTML=hHtml;
+    mCol.innerHTML=mHtml;
+    /* on scroll, read which item sits under the band and store it */
+    hCol.addEventListener('scroll',()=>onPickerScroll(hCol,'hour'));
+    mCol.addEventListener('scroll',()=>onPickerScroll(mCol,'min'));
+    pickerBuilt=true;
+  }
+  let scrollTimers={};
+  function onPickerScroll(col,which){
+    const idx=Math.round(col.scrollTop/ITEM_H);
+    /* highlight the centred item */
+    col.querySelectorAll('.picker-item').forEach((el,i)=>{
+      el.classList.toggle('sel', i===idx);
+    });
+    /* debounce: commit the value once scrolling settles */
+    clearTimeout(scrollTimers[which]);
+    scrollTimers[which]=setTimeout(()=>{
+      const items=col.querySelectorAll('.picker-item');
+      const el=items[idx];
+      if(el){
+        const v=parseInt(el.dataset.v,10);
+        if(which==='hour') state.hour=v; else state.min=v;
+        updateAmpm();
+        /* snap exactly */
+        col.scrollTo({top:idx*ITEM_H, behavior:'smooth'});
+      }
+    },120);
+  }
+  function updateAmpm(){
+    document.getElementById('pickAmpm').textContent = state.hour<12 ? 'AM' : 'PM';
+  }
+  /* when A5 opens, build once and scroll to the stored time */
+  function refreshPicker(){
+    if(!pickerBuilt) buildPicker();
+    const hCol=document.getElementById('pickHour');
+    const mCol=document.getElementById('pickMin');
+    hCol.scrollTop=state.hour*ITEM_H;
+    mCol.scrollTop=state.min*ITEM_H;
+    onPickerScroll(hCol,'hour');
+    onPickerScroll(mCol,'min');
+    updateAmpm();
+  }
+
+  /* ---- A6 duration — four options ------------------------------- */
+  function pickDur(el){
+    document.getElementById('durList').classList.remove('is-untouched');
+    document.querySelectorAll('#durList .dur-opt').forEach(o=>o.classList.remove('is-selected'));
+    el.classList.add('is-selected');
+    state.duration=parseInt(el.dataset.d,10);
+  }
+
+  /* tonight-only length — sets tonightDuration, leaves the default alone */
+  function pickTonightLen(el){
+    document.getElementById('b2lenList').classList.remove('is-untouched');
+    document.querySelectorAll('#b2lenList .dur-opt').forEach(o=>o.classList.remove('is-selected'));
+    el.classList.add('is-selected');
+    state.tonightDuration=parseInt(el.dataset.d,10);
+  }
+  /* when the tonight-length screen opens, reflect the current choice */
+  function refreshB2len(){
+    const current=effectiveDuration();
+    const list=document.getElementById('b2lenList');
+    list.classList.remove('is-untouched');
+    document.querySelectorAll('#b2lenList .dur-opt').forEach(o=>{
+      o.classList.toggle('is-selected', parseInt(o.dataset.d,10)===current);
+    });
+  }
+
+  /* ---- A7 confirmation ------------------------------------------ */
+  function writeA7(){
+    const hh=String(state.hour).padStart(2,'0'),mm=String(state.min).padStart(2,'0');
+    document.getElementById('a7copy').textContent=
+      'Sona begins tonight at '+hh+':'+mm+', for '+state.duration+
+      ' minutes. There is nothing to check between now and then.';
+    buildCycle(); /* the need now sets the 28-night cycle */
+  }
+
+  /* ---- shared A5/A6 routing ------------------------------------- */
+  function fromSettings(){ return history.includes('c4'); }
+  function advanceFromSetup(screen){
+    if(fromSettings()){
+      /* editing from Settings: time -> duration -> back to Settings.
+         only the duration screen returns home, so both are reachable. */
+      if(screen==='a5'){ go('a6'); return; }
+      if(screen==='a6'){
+        history=history.slice(0, history.indexOf('c4')+1);
+        go('c4',true);
+        return;
+      }
+    }
+    if(screen==='a5') go('a6');
+    else if(screen==='a6') go('a7');
+  }
+  function labelSetupCTAs(){
+    const fromSet=fromSettings();
+    const a5=document.getElementById('a5action');
+    const a6=document.getElementById('a6action');
+    /* from Settings, a5 still goes forward to duration — so it stays
+       "Continue."; only a6 saves and returns to Settings. */
+    if(a5) a5.textContent='Continue.';
+    if(a6) a6.textContent=fromSet?'Save the ritual.':'Set the ritual.';
+  }
+
+  /* ---- B2 place composition + dock recognition ------------------ */
+  let composedReady=false;
+  function resetComposition(){
+    composedReady=false;
+    document.getElementById('recogniseMark').classList.remove('shown');
+    document.getElementById('b2action').textContent='The composition is placed.';
+  }
+  function confirmComposition(){
+    if(!composedReady){
+      document.getElementById('recogniseMark').classList.add('shown');
+      document.getElementById('b2action').textContent='Begin the sequence.';
+      composedReady=true;
+      return;
+    }
+    startSequence();
+  }
+
+  /* ---- notifications -------------------------------------------- */
+  let notifOn=true;
+  function toggleNotif(){
+    notifOn=!notifOn;
+    document.getElementById('notifState').textContent=notifOn?'On':'Off';
+    document.getElementById('notifToggle').textContent=
+      notifOn?'— turn the nightly reminder off —':'— turn the nightly reminder on —';
+  }
+  let reorderOn=true;
+  function toggleReorder(){
+    reorderOn=!reorderOn;
+    document.getElementById('reorderState').textContent=reorderOn?'On':'Off';
+    document.getElementById('reorderToggle').textContent=
+      reorderOn?'— turn the reorder notice off —':'— turn the reorder notice on —';
+  }
+
+  /* ===============================================================
+     B3 SEQUENCE — soundscape, movements, pause/resume, completion
+     =============================================================== */
+  let soundOn=true, audioNodes=null, seqTimers=[];
+  let seqElapsed=0, seqStartStamp=0, seqPaused=false;
+  const SEQ_TOTAL=15000; /* 15s demo stands for the full descent */
+
+  function buildSoundscape(){
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const master=ctx.createGain(); master.gain.value=0; master.connect(ctx.destination);
+    const dA=ctx.createOscillator(), dB=ctx.createOscillator();
+    dA.type='sine'; dB.type='sine';
+    dA.frequency.value=110; dB.frequency.value=110*1.5*0.997;
+    const dGain=ctx.createGain(); dGain.gain.value=0.16;
+    const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=420;
+    dA.connect(dGain); dB.connect(dGain); dGain.connect(lp); lp.connect(master);
+    const bufSize=ctx.sampleRate*2;
+    const nb=ctx.createBuffer(1,bufSize,ctx.sampleRate);
+    const data=nb.getChannelData(0);
+    for(let i=0;i<bufSize;i++) data[i]=(Math.random()*2-1)*0.5;
+    const noise=ctx.createBufferSource(); noise.buffer=nb; noise.loop=true;
+    const nf=ctx.createBiquadFilter(); nf.type='lowpass'; nf.frequency.value=600;
+    const nGain=ctx.createGain(); nGain.gain.value=0.05;
+    noise.connect(nf); nf.connect(nGain); nGain.connect(master);
+    const lfo=ctx.createOscillator(), lfoGain=ctx.createGain();
+    lfo.frequency.value=1/14; lfoGain.gain.value=0.05;
+    lfo.connect(lfoGain); lfoGain.connect(master.gain);
+    dA.start(); dB.start(); noise.start(); lfo.start();
+    return {ctx,master,lp,dGain};
+  }
+  function fadeMaster(node,to,seconds){
+    const now=node.context.currentTime;
+    node.gain.cancelScheduledValues(now);
+    node.gain.setValueAtTime(node.gain.value,now);
+    node.gain.linearRampToValueAtTime(to,now+seconds);
+  }
+
+  const movements=[
+    {name:'The Window Hour', status:'Diffusing — light lowering',     at:0},
+    {name:'Reading In',      status:'Diffusion steady — light low',    at:5500},
+    {name:'Settling',        status:'Diffusion easing — light fading', at:11000}
+  ];
+
+  function startSequence(){
+    seqElapsed=0;
+    runSequenceFrom(0);
+  }
+
+  /* runs (or resumes) the sequence from a given elapsed ms */
+  function runSequenceFrom(fromMs){
+    go('b3');
+    seqPaused=false;
+    seqTimers.forEach(t=>clearTimeout(t)); seqTimers=[];
+    const line=document.getElementById('seqLine');
+    const mv=document.getElementById('seqMovement');
+    const st=document.getElementById('seqStatus');
+    const comp=COMPOSITIONS[state.tonightComp];
+    document.getElementById('seqMeta').textContent=comp.seq;
+
+    /* progress line resumes from current fraction */
+    const remaining=SEQ_TOTAL-fromMs;
+    const startFrac=fromMs/SEQ_TOTAL;
+    line.classList.remove('run');
+    line.style.setProperty('--noop','0');
+    /* set the line to its current position, then animate the rest */
+    const after=line;
+    after.style.cssText='';
+    line.classList.remove('run');
+    /* use a fresh transition: width from startFrac to 100% */
+    const bar=document.createElement('style');
+    bar.id='seqBarStyle';
+    const old=document.getElementById('seqBarStyle');
+    if(old) old.remove();
+    bar.textContent='.seq-line::after{width:'+(startFrac*100)+
+      '%;transition:width '+(remaining)+'ms linear;}'+
+      '.seq-line.run::after{width:100%;}';
+    document.head.appendChild(bar);
+    void line.offsetWidth;
+    line.classList.add('run');
+
+    /* set the movement for the current point */
+    let currentMv=movements[0];
+    movements.forEach(m=>{ if(fromMs>=m.at) currentMv=m; });
+    mv.textContent=currentMv.name; mv.style.opacity='1';
+    st.textContent=currentMv.status; st.style.opacity='1';
+
+    if(soundOn){
+      if(!audioNodes) audioNodes=buildSoundscape();
+      audioNodes.ctx.resume();
+      fadeMaster(audioNodes.master,0.85,2);
+    }
+
+    /* schedule remaining movements */
+    movements.forEach(m=>{
+      if(m.at<=fromMs) return;
+      seqTimers.push(setTimeout(()=>{
+        mv.style.opacity='0'; st.style.opacity='0';
+        setTimeout(()=>{
+          mv.textContent=m.name; mv.style.opacity='1';
+          st.textContent=m.status; st.style.opacity='1';
+        },800);
+        if(audioNodes && m.name==='Settling'){
+          const t=audioNodes.ctx.currentTime;
+          audioNodes.lp.frequency.linearRampToValueAtTime(260,t+4);
+          audioNodes.dGain.gain.linearRampToValueAtTime(0.10,t+4);
+        }
+      },m.at-fromMs));
+    });
+
+    seqStartStamp=Date.now();
+    seqTimers.push(setTimeout(()=>{
+      if(audioNodes) fadeMaster(audioNodes.master,0,2.2);
+    },remaining-2100));
+    seqTimers.push(setTimeout(()=>{
+      stopSound(); completeNight(); go('b4');
+    },remaining));
+  }
+
+  function pauseSequence(){
+    /* freeze elapsed, stop timers, go to the pause screen */
+    seqElapsed += Date.now()-seqStartStamp;
+    seqTimers.forEach(t=>clearTimeout(t)); seqTimers=[];
+    seqPaused=true;
+    /* freeze the progress bar where it is */
+    const line=document.getElementById('seqLine');
+    const frac=Math.min(1,seqElapsed/SEQ_TOTAL);
+    const old=document.getElementById('seqBarStyle');
+    if(old) old.remove();
+    const frozen=document.createElement('style');
+    frozen.id='seqBarStyle';
+    frozen.textContent='.seq-line::after{width:'+(frac*100)+'%;transition:none;}';
+    document.head.appendChild(frozen);
+    line.classList.remove('run');
+    if(audioNodes) fadeMaster(audioNodes.master,0,1);
+    go('bpause');
+  }
+
+  function resumeSequence(){
+    runSequenceFrom(seqElapsed);
+  }
+
+  function stopSound(){
+    if(audioNodes){ try{audioNodes.ctx.close();}catch(e){} audioNodes=null; }
+  }
+
+  /* a night is recorded only when the sequence reaches completion
+     OR the user ends it for the night from the pause screen */
+  function completeNight(){
+    const comp=COMPOSITIONS[state.tonightComp];
+    const d=dateFor(state.nightsCompleted);
+    state.pastNights.unshift({
+      date:d.short, name:comp.name, n:comp.n, duration:effectiveDuration()
+    });
+    state.nightsCompleted++;
+    state.tonightComp=null;       /* next night draws fresh from the cycle */
+    state.tonightDuration=null;   /* the one-night length does not carry over */
+    state.overridden=false;
+    seqElapsed=0;
+    resetSeqVisual();
+  }
+  function resetSeqVisual(){
+    const mv=document.getElementById('seqMovement');
+    const st=document.getElementById('seqStatus');
+    mv.textContent='The Window Hour'; mv.style.opacity='1';
+    st.textContent='Diffusing — light lowering'; st.style.opacity='1';
+    const old=document.getElementById('seqBarStyle');
+    if(old) old.remove();
+    document.getElementById('seqLine').classList.remove('run');
+  }
+
+  function toggleMute(){
+    soundOn=!soundOn;
+    document.getElementById('muteBtn').textContent=soundOn?'Sound on':'Sound off';
+    if(!soundOn && audioNodes) fadeMaster(audioNodes.master,0,0.6);
+    if(soundOn && audioNodes) fadeMaster(audioNodes.master,0.85,1.5);
+  }
+
+  /* "end for tonight" from the pause screen still records the night —
+     a paused-then-ended ritual is a night that happened, just shorter.
+     b4's continue-to-morning handles the recording via this hook. */
+  const _go=go;
+  go=function(id,isBack){
+    if(id==='b4' && seqPaused){
+      /* user paused then chose to end — record the night now */
+      completeNight();
+      seqPaused=false;
+    }
+    _go(id,isBack);
+  };
+
+  /* ---- on load: inject back marks, init ------------------------- */
+  document.querySelectorAll('.screen').forEach(s=>{
+    const b=document.createElement('button');
+    b.className='backmark';
+    b.textContent='\u2190 Back';
+    b.onclick=back;
+    s.insertBefore(b,s.firstChild);
+  });
+  updateBackAffordance('a0');
+  buildCycle();
+</script>
+</body>
+</html>

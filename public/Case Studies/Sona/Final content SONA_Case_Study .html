@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sona — Case study · Tooba Ameer</title>
+<meta name="description" content="Sona — designing the hour before sleep. A speculative system concept: ceramic dock, scent compositions, app and brand for the transition out of the day.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Newsreader:ital,opsz,wght@0,6..72,400..500;1,6..72,400..500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F1E9; --paper-deep:#ECE7DA;
+    --ink:#1A1612; --muted:#7A7468;
+    --hairline:#D6D0C2; --accent:#5A2D1C;
+    --paper-on-ink:#F4F1E9; --cream-on-ink:#C8C0AE;
+    --muted-on-ink:#8B8273; --accent-on-ink:#C77449;
+    --hairline-on-ink:#38332C;
+    --display:'Newsreader','Times New Roman',Georgia,serif;
+    --body:'Geist',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+    --pad-x:clamp(28px,6vw,120px); --pad-y:clamp(120px,18vw,240px);
+    --container:1320px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-weight:400;font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+  img{max-width:100%;display:block;height:auto}
+
+  .display-xl{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(80px,16vw,220px);line-height:.95;letter-spacing:-.02em;font-variation-settings:'opsz' 72;color:var(--ink)}
+  .H2{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(32px,4.5vw,56px);line-height:1.1;letter-spacing:-.012em;font-variation-settings:'opsz' 36;color:var(--ink)}
+  .BL{font-family:var(--body);font-weight:400;font-size:clamp(18px,1.6vw,21px);line-height:1.55;color:var(--ink)}
+  .label{font-family:var(--body);font-weight:500;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  em.lead{font-style:italic;font-family:var(--display);font-weight:500;color:var(--ink);font-size:1.02em}
+  .band{padding:var(--pad-y) var(--pad-x)}
+  .band--paper-deep{background:var(--paper-deep)}
+  .band--ink{background:var(--ink)}
+  .container{max-width:var(--container);margin:0 auto}
+
+  /* NAV */
+  .nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;row-gap:10px;padding:22px var(--pad-x);background:rgba(244,241,233,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--hairline)}
+  .nav .logo{font-family:var(--display);font-weight:500;font-style:italic;font-size:20px;letter-spacing:-.01em;text-decoration:none;color:var(--ink)}
+  .nav .links{display:flex;flex-wrap:wrap;gap:32px}
+  .nav .links a{font-family:var(--body);font-weight:500;font-size:13px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--ink);opacity:.7;transition:opacity .2s,color .2s}
+  .nav .links a:hover{opacity:1;color:var(--accent)}
+  @media(max-width:680px){.nav .links{gap:20px;font-size:12px;flex-basis:100%}}
+
+  /* HERO */
+  .hero{padding-top:clamp(120px,16vw,200px);padding-bottom:clamp(96px,12vw,160px)}
+  .hero .label{margin-bottom:clamp(56px,7vw,88px);display:block}
+  .hero .display-xl{margin-bottom:32px;max-width:14ch}
+  .hero-tagline{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(24px,3vw,40px);line-height:1.2;letter-spacing:-.01em;color:var(--muted);max-width:30ch;margin-bottom:48px}
+  .hero .lede{max-width:62ch;margin-bottom:22px}
+  .hero .lede:last-of-type{margin-bottom:0}
+
+  /* HERO META */
+  .hero-meta{margin-top:clamp(80px,10vw,128px);padding-top:32px;border-top:1px solid var(--hairline);display:grid;grid-template-columns:repeat(4,1fr);gap:48px}
+  .hero-meta .k{font-family:var(--body);font-weight:500;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:block}
+  .hero-meta .v{font-family:var(--body);font-weight:400;font-size:14.5px;line-height:1.5;color:var(--ink);display:block}
+  @media(max-width:880px){.hero-meta{grid-template-columns:1fr 1fr;gap:36px}}
+  @media(max-width:480px){.hero-meta{grid-template-columns:1fr;gap:28px}}
+
+  /* CASE SECTION */
+  .case-section{padding:clamp(120px,16vw,200px) var(--pad-x)}
+  .section-marker{display:flex;gap:32px;align-items:baseline;margin-bottom:clamp(48px,6vw,72px);padding-bottom:24px;border-bottom:1px solid var(--hairline)}
+  .section-marker .num{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(22px,2.4vw,32px);line-height:1;color:var(--accent);letter-spacing:-.005em}
+  .section-marker .label{margin-bottom:0}
+  .section-title{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(40px,6.5vw,88px);line-height:1;letter-spacing:-.018em;font-variation-settings:'opsz' 60;color:var(--ink);max-width:20ch;margin-bottom:clamp(40px,5vw,64px)}
+
+  /* BODY PROSE */
+  .body-prose{max-width:62ch}
+  .body-prose p{font-family:var(--body);font-weight:400;font-size:17px;line-height:1.7;color:var(--ink);margin-bottom:24px}
+  .body-prose p:last-child{margin-bottom:0}
+  .body-prose em{font-family:var(--display);font-style:italic;font-weight:500;font-size:1.02em;color:var(--ink)}
+  .body-prose strong{font-weight:500;color:var(--ink)}
+
+  /* SUBSECTION */
+  .subsection{margin-top:clamp(56px,7vw,88px)}
+  .subsection-num{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(20px,2.2vw,26px);color:var(--accent);display:block;margin-bottom:14px;letter-spacing:-.005em}
+  .subsection-title{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(26px,3.4vw,40px);line-height:1.1;letter-spacing:-.012em;font-variation-settings:'opsz' 32;color:var(--ink);max-width:28ch;margin-bottom:clamp(24px,3vw,36px)}
+
+  /* FIGURE */
+  .figure{margin:clamp(48px,6vw,80px) 0}
+  .figure-box{background:var(--paper-deep);border:1px solid var(--hairline);padding:clamp(56px,7vw,96px) clamp(32px,4vw,48px);display:flex;flex-direction:column;gap:24px;align-items:center;text-align:center;position:relative;min-height:clamp(320px,36vw,520px);justify-content:center}
+  .figure-box .fig-num{position:absolute;top:24px;left:24px;font-family:var(--body);font-weight:500;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .figure-box .fig-type{font-family:var(--body);font-weight:500;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .figure-box .fig-desc{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(22px,2.6vw,32px);line-height:1.35;color:var(--ink);max-width:38ch}
+  .figure-caption{margin-top:18px;font-family:var(--display);font-style:italic;font-weight:400;font-size:14.5px;line-height:1.5;color:var(--muted);max-width:60ch}
+
+  .figure-grid{display:grid;gap:24px;margin:clamp(48px,6vw,80px) 0}
+  .figure-grid--2{grid-template-columns:1fr 1fr}
+  .figure-grid--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .figure-grid--4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .figure-grid .figure{margin:0}
+  .figure-grid .figure-box{padding:clamp(40px,5vw,64px) clamp(24px,3vw,36px);min-height:clamp(260px,26vw,360px)}
+  .figure-grid .figure-box .fig-desc{font-size:clamp(15px,1.6vw,19px);max-width:24ch}
+  @media(max-width:760px){.figure-grid--2,.figure-grid--3,.figure-grid--4{grid-template-columns:1fr}}
+
+  /* FRAMEWORK */
+  .framework{margin:clamp(48px,6vw,80px) 0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);display:grid}
+  .framework--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .framework--4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .framework--5{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .fw-cell{padding:clamp(32px,4vw,48px) clamp(24px,3vw,36px);border-right:1px solid var(--hairline);display:flex;flex-direction:column;gap:18px}
+  .fw-cell:last-child{border-right:none}
+  .fw-cell .num{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(26px,3vw,38px);line-height:1;color:var(--accent);letter-spacing:-.01em}
+  .fw-cell .head{font-family:var(--body);font-weight:500;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+  .fw-cell .body{font-family:var(--body);font-weight:400;font-size:14.5px;line-height:1.6;color:var(--ink)}
+  .fw-cell .body em{font-family:var(--display);font-style:italic;font-weight:500;color:var(--ink)}
+  .fw-cell .q{font-family:var(--display);font-style:italic;font-weight:500;font-size:15px;color:var(--accent);margin-top:6px}
+  @media(max-width:880px){
+    .framework--3,.framework--4,.framework--5{grid-template-columns:1fr 1fr}
+    .fw-cell{border-right:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+    .fw-cell:nth-child(2n){border-right:none}
+  }
+  @media(max-width:560px){
+    .framework--3,.framework--4,.framework--5{grid-template-columns:1fr}
+    .fw-cell{border-right:none}
+  }
+
+  /* PULL QUOTE */
+  .pull-quote{margin:clamp(72px,9vw,128px) 0;padding:clamp(56px,7vw,96px) 0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+  .pull-quote p{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(32px,5vw,64px);line-height:1.08;letter-spacing:-.015em;font-variation-settings:'opsz' 48;color:var(--ink);max-width:28ch}
+
+  /* FLOW DIAGRAM (Sona 5-stage) */
+  .flow{margin:clamp(48px,6vw,80px) 0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+  .flow-stage{padding:clamp(32px,4vw,48px) clamp(20px,2.4vw,32px);border-right:1px solid var(--hairline);display:flex;flex-direction:column;gap:18px}
+  .flow-stage:last-child{border-right:none}
+  .flow-stage .num{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(22px,2.4vw,32px);line-height:1;color:var(--accent);letter-spacing:-.005em}
+  .flow-stage .stage-name{font-family:var(--body);font-weight:500;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink)}
+  .flow-stage .desc{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(17px,1.8vw,22px);line-height:1.3;color:var(--ink)}
+  .flow-stage .owner{font-family:var(--body);font-weight:400;font-size:12.5px;color:var(--muted);margin-top:auto;line-height:1.5}
+  .flow-stage .owner::before{content:"Owner — ";font-weight:500;color:var(--ink)}
+  @media(max-width:880px){
+    .flow{grid-template-columns:1fr 1fr}
+    .flow-stage{border-right:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+    .flow-stage:nth-child(2n){border-right:none}
+  }
+  @media(max-width:560px){
+    .flow{grid-template-columns:1fr}
+    .flow-stage{border-right:none}
+  }
+
+  /* PROTOTYPE CARD */
+  .prototype-card{margin:clamp(48px,6vw,80px) 0;padding:clamp(48px,6vw,80px);background:var(--ink);color:var(--paper-on-ink);display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center}
+  .prototype-card .text{display:flex;flex-direction:column;gap:18px}
+  .prototype-card .label{color:var(--muted-on-ink)}
+  .prototype-card .title{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(28px,3.5vw,44px);line-height:1.1;color:var(--paper-on-ink);max-width:30ch}
+  .prototype-card .desc{font-family:var(--body);font-weight:400;font-size:14px;line-height:1.55;color:var(--cream-on-ink);max-width:50ch}
+  .prototype-card .cta{font-family:var(--body);font-weight:500;font-size:13px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;color:var(--paper-on-ink);border:1px solid var(--paper-on-ink);padding:18px 32px;display:inline-block;transition:background .25s,color .25s}
+  .prototype-card .cta:hover{background:var(--paper-on-ink);color:var(--ink)}
+  @media(max-width:760px){.prototype-card{grid-template-columns:1fr}}
+
+  /* ROLE-SCOPE */
+  .role-scope-grid{display:grid;grid-template-columns:200px 1fr;gap:clamp(32px,4vw,64px);margin-top:clamp(40px,5vw,56px)}
+  .role-scope-grid:not(:first-of-type){border-top:1px solid var(--hairline);padding-top:clamp(40px,5vw,56px)}
+  .role-scope-grid .k{font-family:var(--body);font-weight:500;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .role-scope-grid .v{font-family:var(--body);font-weight:400;font-size:15.5px;line-height:1.65;color:var(--ink);max-width:60ch}
+  @media(max-width:680px){.role-scope-grid{grid-template-columns:1fr;gap:14px}}
+
+  /* NEXT PROJECT */
+  .next-project{padding:clamp(120px,16vw,200px) var(--pad-x);background:var(--ink)}
+  .next-project .label{color:var(--muted-on-ink);margin-bottom:40px;display:block}
+  .next-project-link{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(72px,12vw,180px);line-height:.95;letter-spacing:-.02em;font-variation-settings:'opsz' 72;color:var(--paper-on-ink);text-decoration:none;display:inline-block;transition:color .3s ease}
+  .next-project-link:hover{color:var(--accent-on-ink)}
+  .next-project-link .arrow{display:inline-block;margin-left:.15em;transition:transform .3s ease}
+  .next-project-link:hover .arrow{transform:translateX(16px)}
+  .next-project .desc{font-family:var(--body);font-weight:400;font-size:15px;color:var(--cream-on-ink);margin-top:40px;max-width:52ch;line-height:1.6}
+
+  /* CONNECT */
+  .connect-band{padding:clamp(96px,12vw,160px) var(--pad-x);border-top:1px solid var(--hairline)}
+  .connect-band .label{margin-bottom:48px;display:block}
+  .connect-line{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(28px,4.5vw,64px);line-height:1.1;letter-spacing:-.012em;color:var(--ink);max-width:18ch}
+  .connect-line a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink);padding-bottom:2px;transition:color .25s,border-color .25s}
+  .connect-line a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .links-row{display:flex;flex-wrap:wrap;gap:32px;margin-top:clamp(48px,6vw,72px);padding-top:32px;border-top:1px solid var(--hairline)}
+  .links-row a{font-family:var(--body);font-weight:500;font-size:12px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--ink);opacity:.7;transition:opacity .2s,color .2s}
+  .links-row a:hover{opacity:1;color:var(--accent)}
+
+  footer.site-footer{padding:48px var(--pad-x);border-top:1px solid var(--hairline);background:var(--paper)}
+  footer.site-footer .container{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-family:var(--body);font-weight:400;font-size:12px;letter-spacing:.06em;color:var(--muted)}
+  footer.site-footer a{color:var(--muted);text-decoration:none}
+  footer.site-footer a:hover{color:var(--ink)}
+
+  /* HERO BODY — 2-col layout (tagline+lede left, figure right) */
+  .hero-body{display:grid;grid-template-columns:1fr 1fr;gap:clamp(48px,6vw,96px);align-items:start;margin-bottom:clamp(56px,7vw,96px)}
+  .hero-body-text{display:flex;flex-direction:column;gap:clamp(28px,3.5vw,40px)}
+  .hero-body-text .hero-tagline,.hero-body-text .tagline{margin-bottom:0}
+  .hero-body-text .lede{margin-bottom:0;max-width:none}
+  .hero-body-text .lede+.lede{margin-top:-12px}
+  .hero-body-figure .figure{margin:0}
+  .hero-body-figure .figure-box{min-height:clamp(360px,42vw,560px);padding:clamp(40px,5vw,72px) clamp(28px,4vw,44px)}
+  @media(max-width:880px){.hero-body{grid-template-columns:1fr;gap:48px;margin-bottom:48px}}
+
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="logo" href="index.html">Tooba Ameer</a>
+  <div class="links">
+    <a href="index.html#work">Work</a>
+    <a href="about.html">About</a>
+    <a href="CV/Tooba_Ameer_CV.pdf">Resume</a>
+    <a href="https://www.linkedin.com/in/tooba-ameer" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="mailto:hello@toobaameer.co.uk">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="band hero">
+  <div class="container">
+    <span class="label">Case study · Sona · Concept · 2025</span>
+    <h1 class="display-xl">Sona</h1>
+    <div class="hero-body">
+      <div class="hero-body-text">
+        <p class="hero-tagline">Designing the hour before sleep.</p>
+        <p class="lede BL">Most sleep products focus on sleep. Sona focuses on what happens <em class="lead">before</em> it — a concept exploring how a ceramic dock, scent compositions, an app, and a brand might help people transition out of the day and into rest.</p>
+      </div>
+      <div class="hero-body-figure">
+        <div class="figure">
+          <div class="figure-box">
+            <span class="fig-num">Fig. 01</span>
+            <span class="fig-type">Hero composition</span>
+            <span class="fig-desc">The Ritual Dock in context — bedside, evening light.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-meta">
+      <div><span class="k">Role</span><span class="v">Future-opportunity design — concept, product &amp; ecosystem vision, art direction</span></div>
+      <div><span class="k">Type</span><span class="v">Speculative concept</span></div>
+      <div><span class="k">Duration</span><span class="v">4 weeks</span></div>
+      <div><span class="k">Focus</span><span class="v">Behaviour · systems · ritual design</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 01 — DEMONSTRATES -->
+<section class="case-section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">01.</span>
+      <span class="label">What this demonstrates</span>
+    </div>
+    <h2 class="section-title">Four competencies on display.</h2>
+
+    <div class="framework framework--4">
+      <div class="fw-cell">
+        <span class="num">01</span>
+        <span class="head">Strategic foresight</span>
+        <span class="body">Reading a behavioural shift before the market names it — the problem is the transition out of the day, not sleep itself.</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">02</span>
+        <span class="head">Opportunity design</span>
+        <span class="body">Identifying an unowned space and defining the category that should fill it, rather than answering an existing brief.</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">03</span>
+        <span class="head">Ecosystem thinking</span>
+        <span class="body">Four parts — object, scent, app, brand — designed to hand off across one experience, not a product with accessories.</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">04</span>
+        <span class="head">Behavioural insight</span>
+        <span class="body">Designing for how people actually disengage, and refusing the tracking paradigm that makes the problem worse.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 02 — WHY -->
+<section class="case-section band--paper-deep">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">02.</span>
+      <span class="label">Why I pursued this project</span>
+    </div>
+    <h2 class="section-title">A brief I chose, to ask a bigger question.</h2>
+
+    <div class="body-prose">
+      <p>Most of my work is commercial and tightly constrained — products built to ship and sell against a cost and a calendar. I took on this speculative brief deliberately, to work the muscle that day-to-day product work rarely asks for: starting from a <em>behaviour</em> rather than a brief, and designing a whole ecosystem rather than a single object.</p>
+      <p>The brief set the territory — a sleep and mindfulness ritual for urban professionals who'd tried everything and distrusted brands that over-promise — and asked for a product, an app, and a campaign. I used it to answer a larger question: <em>if I could define a category from scratch, what would I choose to build, and what would I refuse to?</em></p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 03 — OPPORTUNITY -->
+<section class="case-section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">03.</span>
+      <span class="label">The opportunity</span>
+    </div>
+    <h2 class="section-title">A market pointed at the wrong moment.</h2>
+
+    <div class="body-prose">
+      <p>The sleep market is crowded, but it is almost entirely pointed at the wrong moment. Trackers, scores, and smart mattresses measure sleep once you're in it; supplements and teas treat the body. Almost nothing is designed for the hour <em>before</em> — the transition out of a stimulated day, which is where most people actually get stuck.</p>
+      <p>That gap is widening. Evenings have filled with screens engineered to hold attention, and the dominant "solution" — a sleep app on the same phone causing the problem — competes with the distraction instead of ending it. <em>The underserved user isn't the person who can't sleep. It's the person who can't stop.</em> That's an unowned category, and the bet behind Sona is that it's the one worth defining.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 04 — FORESIGHT -->
+<section class="case-section band--paper-deep">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">04.</span>
+      <span class="label">The foresight</span>
+    </div>
+    <h2 class="section-title">Three bets about behaviour.</h2>
+
+    <div class="body-prose">
+      <p>Before any form, I made three bets about how people actually relate to the end of the day — and pressure-tested each one: against my own reasoning, and in unstructured conversations with people I trusted to push back.</p>
+    </div>
+
+    <div class="framework framework--3">
+      <div class="fw-cell">
+        <span class="num">01</span>
+        <span class="head">Sleep isn't the problem. Transition is.</span>
+        <span class="body">The evening has filled with stimulation. The hard part may not be sleeping — it's stopping.</span>
+        <span class="q">What if we designed the transition itself, not the sleep?</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">02</span>
+        <span class="head">Awareness doesn't change behaviour.</span>
+        <span class="body">People already know the habits. Knowledge isn't the barrier — starting is.</span>
+        <span class="q">What if the goal was to make the right move easier to begin?</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">03</span>
+        <span class="head">A physical ritual beats a digital reminder.</span>
+        <span class="body">Most sleep tools live inside the device causing the distraction. Objects occupy space and signal intent.</span>
+        <span class="q">Could an object help people disengage better than another screen?</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 05 — KEY DECISIONS -->
+<section class="case-section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">05.</span>
+      <span class="label">Key design decisions</span>
+    </div>
+    <h2 class="section-title">How I arrived at the ecosystem.</h2>
+
+    <div class="framework framework--3">
+      <div class="fw-cell">
+        <span class="num">01</span>
+        <span class="head">Why physical, not an app alone?</span>
+        <span class="body">A screen competes with the very distraction it's meant to end. A physical object occupies space and signals intent — a reminder by existing, not by interrupting.</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">02</span>
+        <span class="head">Why scent?</span>
+        <span class="body">A cue that works without attention or a screen. Smell ties to memory and mood faster than an interface can, so it carries the ritual while the phone goes away.</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">03</span>
+        <span class="head">Why a dock, not a wearable or candle?</span>
+        <span class="body">A ritual needs a fixed place to repeat. A wearable blurs into the day; a candle has no system behind it. A dock gives the evening a spot to return to — and place is what makes a habit stick.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 06 — STRATEGIC DECISION -->
+<section class="case-section band--paper-deep">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">06.</span>
+      <span class="label">The strategic decision</span>
+    </div>
+    <h2 class="section-title">No sensors. No scores. No streaks.</h2>
+
+    <div class="body-prose">
+      <p>The first idea was a quiet record of restful nights. I dropped it before building it. <em>The moment Sona scored your sleep, it would become the thing it was meant to replace</em> — another metric to optimise, another reason to reach for the phone, another way to fail at rest.</p>
+      <p>So the founding decision was a refusal. In a category whose entire logic is measurement, choosing <em>not</em> to measure is the strategic bet — it's what makes Sona a different proposition rather than a softer-looking tracker. Everything else follows from that one line: the dock has no screen, the app has one job a night and then disappears, and the only thing Sona keeps is a plain record it draws no conclusions from.</p>
+    </div>
+
+    <div class="pull-quote">
+      <p>The discipline wasn't designing more. It was identifying what the category does by reflex — and deciding to do the opposite on purpose.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 07 — POSITIONING -->
+<section class="case-section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">07.</span>
+      <span class="label">Positioning</span>
+    </div>
+    <h2 class="section-title">I set the world before the object.</h2>
+
+    <div class="body-prose">
+      <p>Before drawing a single form, I decided what Sona was <em>not</em>: not a gadget, not a wellness app, not aromatherapy. I built its world from publishing, bookmaking, photography, and type — editorial, restrained, exact — and the palette of ivory, ink, and ochre, the type, and the tone all came from here.</p>
+    </div>
+
+    <div class="figure">
+      <div class="figure-box">
+        <span class="fig-num">Fig. 02</span>
+        <span class="fig-type">Reference grid · 8-up</span>
+        <span class="fig-desc">Publishing, bookmaking, photography, type, colour, object, interior, culture — and where Sona lands.</span>
+      </div>
+      <p class="figure-caption">Reference imagery sourced and credited; the synthesis and direction are mine.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 08 — ECOSYSTEM -->
+<section class="case-section band--paper-deep">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">08.</span>
+      <span class="label">The ecosystem</span>
+    </div>
+    <h2 class="section-title">Four parts that hand off across the evening.</h2>
+
+    <div class="body-prose">
+      <p>Sona isn't a single product, and it isn't a system in the operational sense — it's an ecosystem of four parts — dock, compositions, app, and brand — each owning a moment and passing to the next. I mapped the transition into five stages and gave each part a stage to hold, then hand on.</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-stage">
+        <span class="num">01</span>
+        <span class="stage-name">Arrive</span>
+        <span class="desc">The day ends. The phone is still in hand.</span>
+        <span class="owner">The moment before</span>
+      </div>
+      <div class="flow-stage">
+        <span class="num">02</span>
+        <span class="stage-name">Choose</span>
+        <span class="desc">A composition sets the intent for the evening.</span>
+        <span class="owner">App + Compositions</span>
+      </div>
+      <div class="flow-stage">
+        <span class="num">03</span>
+        <span class="stage-name">Begin</span>
+        <span class="desc">The paper goes on the Dock; light and scent start.</span>
+        <span class="owner">Dock</span>
+      </div>
+      <div class="flow-stage">
+        <span class="num">04</span>
+        <span class="stage-name">Release</span>
+        <span class="desc">The phone goes down; the room takes over.</span>
+        <span class="owner">Dock + Brand</span>
+      </div>
+      <div class="flow-stage">
+        <span class="num">05</span>
+        <span class="stage-name">Rest</span>
+        <span class="desc">Reading, stillness — sleep arrived at, not chased.</span>
+        <span class="owner">The room</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 09 — DOCK -->
+<section class="case-section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">09.</span>
+      <span class="label">The solution · Dock</span>
+    </div>
+    <h2 class="section-title">A domestic object, not a gadget.</h2>
+
+    <div class="body-prose">
+      <p>The hardest decision was resisting the obvious one — a sleek tech device. The dock had to read as something you'd own, not a device you'd tend to: a ceramic stone body, warm and matte, closer to an object on a shelf than a gadget on a nightstand.</p>
+      <p>That choice is behavioural, not decorative. <em>A device asks to be operated; an object simply sits there and signals intent.</em> The form had to disappear into the room so the ritual — not the technology — is what the evening returns to.</p>
+    </div>
+
+    <div class="figure-grid figure-grid--3">
+      <div class="figure">
+        <div class="figure-box">
+          <span class="fig-num">Fig. 03a</span>
+          <span class="fig-type">Dock — top view</span>
+          <span class="fig-desc">Ceramic body, warm matte finish.</span>
+        </div>
+      </div>
+      <div class="figure">
+        <div class="figure-box">
+          <span class="fig-num">Fig. 03b</span>
+          <span class="fig-type">Dock — front view</span>
+          <span class="fig-desc">Form and proportion.</span>
+        </div>
+      </div>
+      <div class="figure">
+        <div class="figure-box">
+          <span class="fig-num">Fig. 03c</span>
+          <span class="fig-type">Dock — section</span>
+          <span class="fig-desc">Internal build, mechanism, dimensions.</span>
+        </div>
+      </div>
+    </div>
+    <p class="figure-caption" style="text-align:center">Sona Ritual Dock — views, materials, mechanism, internal build, and dimensions.</p>
+  </div>
+</section>
+
+<!-- SECTION 10 — COMPOSITIONS -->
+<section class="case-section band--paper-deep">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">10.</span>
+      <span class="label">The solution · Compositions</span>
+    </div>
+    <h2 class="section-title">Packaged like a publication, not a supplement.</h2>
+
+    <div class="body-prose">
+      <p>The direction I explored and turned away from: I started with fragrance capsules and oils, and rejected both — each instantly recast Sona as a supplement or aromatherapy product. I moved to incense papers in a linen-wrapped box, indexed like a small publication: <em>seven compositions for seven states of mind, four papers each, across a 28-night cycle</em> — no oils, no liquids, just paper, scent, and time.</p>
+    </div>
+
+    <div class="figure-grid figure-grid--4">
+      <div class="figure">
+        <div class="figure-box">
+          <span class="fig-num">Fig. 04a</span>
+          <span class="fig-type">Box exterior</span>
+          <span class="fig-desc">Linen-wrapped.</span>
+        </div>
+      </div>
+      <div class="figure">
+        <div class="figure-box">
+          <span class="fig-num">Fig. 04b</span>
+          <span class="fig-type">Box open</span>
+          <span class="fig-desc">Compositions revealed.</span>
+        </div>
+      </div>
+      <div class="figure">
+        <div class="figure-box">
+          <span class="fig-num">Fig. 04c</span>
+          <span class="fig-type">One composition</span>
+          <span class="fig-desc">With its manual card.</span>
+        </div>
+      </div>
+      <div class="figure">
+        <div class="figure-box">
+          <span class="fig-num">Fig. 04d</span>
+          <span class="fig-type">Specifications</span>
+          <span class="fig-desc">Typography detail.</span>
+        </div>
+      </div>
+    </div>
+    <p class="figure-caption" style="text-align:center">The box, the manual card, one composition, and specifications.</p>
+  </div>
+</section>
+
+<!-- SECTION 11 — APP -->
+<section class="case-section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">11.</span>
+      <span class="label">Experience journey · the app</span>
+    </div>
+    <h2 class="section-title">One flow, then the phone goes down.</h2>
+
+    <div class="body-prose">
+      <p>The brief asked for a companion app; the design problem was making it the kind you open once a night and then forget. A single job each evening — set the ritual, then disappear — ending in a screen that simply says: <em>set the phone down, Sona will continue.</em></p>
+    </div>
+
+    <div class="framework framework--4">
+      <div class="fw-cell">
+        <span class="num">01</span>
+        <span class="head">Open</span>
+        <span class="body">Open Sona — it finds the Dock and picks up the ritual. No sign-up, no feed, no notifications.</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">02</span>
+        <span class="head">Set</span>
+        <span class="body">Set what the evening is for, choose tonight's composition, and set the length of the descent.</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">03</span>
+        <span class="head">Begin</span>
+        <span class="body">Place the incense paper in the Dock's vessel; the Dock recognises it and begins.</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">04</span>
+        <span class="head">Release</span>
+        <span class="body">Set the phone down. The ritual screen dims to the room and the sequence continues without you.</span>
+      </div>
+    </div>
+
+    <div class="figure">
+      <div class="figure-box">
+        <span class="fig-num">Fig. 05</span>
+        <span class="fig-type">App screen sequence</span>
+        <span class="fig-desc">Selected screens from the prototype — onboarding, pairing, intent, in-ritual, the 28-night cycle.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 12 — PROTOTYPE -->
+<section class="case-section band--paper-deep">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">12.</span>
+      <span class="label">Working prototype</span>
+    </div>
+    <h2 class="section-title">Click through the ritual.</h2>
+
+    <div class="body-prose">
+      <p>Beyond static screens, I built Sona's nightly flow as an interactive prototype — onboarding, set-up, and the ritual itself, click by click.</p>
+    </div>
+
+    <div class="prototype-card">
+      <div class="text">
+        <span class="label">Interactive prototype</span>
+        <h3 class="title">The nightly flow, end to end.</h3>
+        <p class="desc">Best viewed on desktop. Set in Source Serif 4 — a freely-available stand-in for Tiempos, the paid font specified in the design but unavailable in the AI-assisted prototyping environment.</p>
+      </div>
+      <a class="cta" href="Sona_Prototype.html" target="_blank">Open prototype →</a>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 13 — BRAND -->
+<section class="case-section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">13.</span>
+      <span class="label">Brand &amp; campaign</span>
+    </div>
+    <h2 class="section-title">An editorial voice for calm.</h2>
+
+    <div class="body-prose">
+      <p>The brief called for a launch campaign, so the identity had to carry beyond the product — unhurried, exact, closer to a publication than a brand, selling a feeling rather than a feature. I set it against four tensions:</p>
+    </div>
+
+    <div class="framework framework--4">
+      <div class="fw-cell">
+        <span class="num">01</span>
+        <span class="head">Calm, not passive</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">02</span>
+        <span class="head">Premium, not exclusive</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">03</span>
+        <span class="head">Ritual, not spiritual</span>
+      </div>
+      <div class="fw-cell">
+        <span class="num">04</span>
+        <span class="head">Contemporary, not clinical</span>
+      </div>
+    </div>
+
+    <div class="figure">
+      <div class="figure-box">
+        <span class="fig-num">Fig. 06</span>
+        <span class="fig-type">Campaign — across formats</span>
+        <span class="fig-desc">Web, social, print — the identity carried beyond the product.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 14 — REFLECTION -->
+<section class="case-section band--paper-deep">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">14.</span>
+      <span class="label">Reflection</span>
+    </div>
+    <h2 class="section-title">What this approach unlocks.</h2>
+
+    <div class="body-prose">
+      <p>Sona is a concept, not a validated product, and I'd treat it that way: before building anything, I'd test the core bet — <em>does designing the transition actually beat optimising the sleep?</em> — small and qualitative, in real bedrooms. The commercial questions, refill economics and retention, are what I'd model before it became a product, not after.</p>
+      <p>But the part that travels isn't the dock or the scent. It's <em>the method</em>: start from a behaviour the market has misread, identify the moment everyone else is designing around, and decide what to <em>refuse</em> before deciding what to build. That approach isn't specific to sleep. It's how I'd come at any category where the obvious products are all solving the wrong half of the problem — which is most of the categories worth entering.</p>
+    </div>
+
+    <div class="pull-quote">
+      <p>Genie was a category rebuilt. Phoenix was a product made to punch above its cost. Sona is the one where I got to ask the earlier question: not how to make the thing better, but whether the category is even pointed at the right need.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 15 — ROLE & SCOPE -->
+<section class="case-section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="num">15.</span>
+      <span class="label">Role &amp; scope</span>
+    </div>
+    <h2 class="section-title">What I made.</h2>
+
+    <div class="body-prose">
+      <p>Sole designer, end to end: problem framing, concept and form development, CMF, app UI and flows, brand identity and visual system, packaging, and launch campaign — brought together as an interactive prototype.</p>
+      <p>Designed over four weeks from a brief set in a design certification (Job Escape). The concept, product direction and ecosystem vision are mine. I worked with AI tools through the process — to explore research directions and to build the visualisation and art direction — directing the calls throughout.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT PROJECT -->
+<section class="next-project">
+  <div class="container">
+    <span class="label">Return to</span>
+    <a class="next-project-link" href="index.html#work">Selected work <span class="arrow">→</span></a>
+    <p class="desc">Three projects — five years of building consumer products end to end. Genie, Phoenix, Sona.</p>
+  </div>
+</section>
+
+<section class="connect-band">
+  <div class="container">
+    <span class="label">Connect</span>
+    <p class="connect-line">Hiring or curious — <a href="mailto:hello@toobaameer.co.uk">hello@toobaameer.co.uk</a></p>
+    <div class="links-row">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="CV/Tooba_Ameer_CV.pdf">Resume</a>
+      <a href="https://www.linkedin.com/in/tooba-ameer" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div>© 2026 Tooba Ameer — Design &amp; Development Manager</div>
+    <div>Leeds, United Kingdom</div>
+  </div>
+</footer>
+
+</body>
+</html>

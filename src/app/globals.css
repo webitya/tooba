@@ -1,26 +1,46 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Home Theme (Default) */
+  --color-ivory: #F7F5F1;
+  --color-surface: #EAE7E0;
+  --color-ink: #16140F;
+  --color-muted: #6B675E;
+  --color-hairline: #D8D4CB;
+  --color-accent: #D2552B;
+  --color-accent-on-ink: #E08A5F;
+  --color-ink-on-ink: #D9D4C9;
+  --color-ink-sub-on-ink: #B5B0A6;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* About Theme */
+  --color-paper: #F4F1E9;
+  --color-paper-deep: #ECE7DA;
+  --color-ink-about: #1A1612;
+  --color-muted-about: #7A7468;
+  --color-hairline-about: #D6D0C2;
+  --color-accent-about: #5A2D1C;
+  --color-paper-on-ink: #F4F1E9;
+  --color-cream-on-ink: #C8C0AE;
+  --color-muted-on-ink: #8B8273;
+
+  --font-serif: var(--font-fraunces), Georgia, serif;
+  --font-sans: var(--font-hanken-grotesk), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  
+  --font-display: var(--font-newsreader), "Times New Roman", Georgia, serif;
+  --font-body: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  
+  --container-narrow: 880px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Fallback defaults overridden in layout/page wrappers */
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+a, button {
+  @apply transition-all duration-300 ease-in-out;
 }
