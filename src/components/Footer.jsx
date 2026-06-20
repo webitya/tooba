@@ -21,8 +21,8 @@ export default function Footer() {
           <div className="flex gap-2 flex-wrap">
             <Link href="/about" className={`${hoverClass} transition-colors`}>About</Link> ·
             <Link href="/resume" className={`${hoverClass} transition-colors`}>Resume</Link> ·
-            <a href="https://www.linkedin.com/in/tooba-ameer" target="_blank" rel="noopener noreferrer" className={`${hoverClass} transition-colors`}>LinkedIn</a> ·
-            <a href="mailto:hello@toobaameer.co.uk" className={`${hoverClass} transition-colors`}>Contact</a>
+            <Link href="/linkedin" className={`${hoverClass} transition-colors`}>LinkedIn</Link> ·
+            <Link href="/contact" className={`${hoverClass} transition-colors`}>Contact</Link>
           </div>
         )}
       </div>

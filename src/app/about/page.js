@@ -197,13 +197,13 @@ export default function About() {
         <div className="max-w-[1320px] mx-auto">
           <span className="font-body font-medium text-[11.5px] tracking-[0.18em] uppercase text-[#7A7468] block mb-12">Connect</span>
           <p className="font-display italic font-normal text-[clamp(28px,4.5vw,64px)] leading-[1.1] tracking-[-0.012em] text-[#1A1612] max-w-[18ch]">
-            Hiring or curious — <a href="mailto:hello@toobaameer.co.uk" className="text-[#1A1612] border-b border-[#1A1612] pb-[2px] hover:text-[#5A2D1C] hover:border-[#5A2D1C] transition-colors duration-250">hello@toobaameer.co.uk</a>
+            Hiring or curious — <Link href="/contact" className="text-[#1A1612] border-b border-[#1A1612] pb-[2px] hover:text-[#5A2D1C] hover:border-[#5A2D1C] transition-colors duration-250">hello@toobaameer.co.uk</Link>
           </p>
           <div className="flex flex-wrap gap-8 mt-[clamp(48px,6vw,72px)] pt-8 border-t border-[#D6D0C2]">
             <Link href="/" className="font-body font-medium text-[12px] tracking-[0.16em] uppercase text-[#1A1612] opacity-70 hover:opacity-100 hover:text-[#5A2D1C] transition-all duration-200">Home</Link>
             <Link href="/#work" className="font-body font-medium text-[12px] tracking-[0.16em] uppercase text-[#1A1612] opacity-70 hover:opacity-100 hover:text-[#5A2D1C] transition-all duration-200">Work</Link>
             <Link href="/resume" className="font-body font-medium text-[12px] tracking-[0.16em] uppercase text-[#1A1612] opacity-70 hover:opacity-100 hover:text-[#5A2D1C] transition-all duration-200">Resume</Link>
-            <a href="https://www.linkedin.com/in/tooba-ameer" target="_blank" rel="noopener noreferrer" className="font-body font-medium text-[12px] tracking-[0.16em] uppercase text-[#1A1612] opacity-70 hover:opacity-100 hover:text-[#5A2D1C] transition-all duration-200">LinkedIn</a>
+            <Link href="/linkedin" className="font-body font-medium text-[12px] tracking-[0.16em] uppercase text-[#1A1612] opacity-70 hover:opacity-100 hover:text-[#5A2D1C] transition-all duration-200">LinkedIn</Link>
           </div>
         </div>
       </section>

@@ -127,12 +127,12 @@ export default function Home() {
             <Link href="/resume" className="font-sans font-semibold text-[15px] text-ink border border-hairline rounded-full px-5 py-2.5 hover:border-accent hover:text-accent hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
               <FiDownload /> Resume
             </Link>
-            <a href="https://www.linkedin.com/in/tooba-ameer" target="_blank" rel="noopener noreferrer" className="font-sans font-semibold text-[15px] text-ink border border-hairline rounded-full px-5 py-2.5 hover:border-accent hover:text-accent hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
+            <Link href="/linkedin" className="font-sans font-semibold text-[15px] text-ink border border-hairline rounded-full px-5 py-2.5 hover:border-accent hover:text-accent hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
               <FiLinkedin /> LinkedIn
-            </a>
-            <a href="mailto:hello@toobaameer.co.uk" className="font-sans font-semibold text-[15px] text-ink border border-hairline rounded-full px-5 py-2.5 hover:border-accent hover:text-accent hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
+            </Link>
+            <Link href="/contact" className="font-sans font-semibold text-[15px] text-ink border border-hairline rounded-full px-5 py-2.5 hover:border-accent hover:text-accent hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
               <FiMail /> Contact
-            </a>
+            </Link>
           </div>
         </div>
       </section>

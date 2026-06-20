@@ -38,20 +38,18 @@ export default function Navbar() {
         >
           {!isAbout && <FiDownload />} Resume
         </Link>
-        <a 
-          href="https://www.linkedin.com/in/tooba-ameer" 
-          target="_blank" 
-          rel="noopener noreferrer" 
+        <Link 
+          href="/linkedin" 
           className={`text-ink/80 ${hoverColor} hover:opacity-100 transition-colors flex items-center gap-1`}
         >
           {!isAbout && <FiLinkedin />} LinkedIn
-        </a>
-        <a 
-          href="mailto:hello@toobaameer.co.uk" 
+        </Link>
+        <Link 
+          href="/contact" 
           className={`text-ink/80 ${hoverColor} hover:opacity-100 transition-colors flex items-center gap-1`}
         >
           {!isAbout && <FiMail />} Contact
-        </a>
+        </Link>
       </div>
     </nav>
   );
