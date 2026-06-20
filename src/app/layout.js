@@ -26,8 +26,14 @@ const geistSans = Geist({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://toobaameer.co.uk"),
   title: "Tooba Ameer — Product & Development, Consumer Goods",
   description: "Design & Development Manager with 8 years building physical consumer products end to end.",
+  openGraph: {
+    type: "website",
+    locale: "en_GB",
+    siteName: "Tooba Ameer Portfolio",
+  },
 };
 
 export default function RootLayout({ children }) {

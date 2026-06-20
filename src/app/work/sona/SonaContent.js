@@ -19,9 +19,9 @@ const stagger = {
 export default function SonaContent() {
   return (
     <div className="case-study-root min-h-screen">
-      
+
       {/* Hero Section */}
-      <motion.section 
+      <motion.section
         className="band hero"
         initial="hidden"
         animate="visible"
@@ -34,7 +34,7 @@ export default function SonaContent() {
           <motion.h1 variants={fadeUp} className="display-xl mb-4">
             Sona
           </motion.h1>
-          
+
           <div className="hero-body grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             <motion.div variants={fadeUp} className="hero-body-text lg:col-span-6">
               <p className="hero-tagline font-display italic text-3xl mb-6 text-accent">
@@ -49,10 +49,10 @@ export default function SonaContent() {
               <div className="figure group">
                 <div className="figure-box p-0 overflow-hidden border border-hairline rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
                   <div className="overflow-hidden">
-                    <img 
-                      src="/Project Images/Sona/Web banner.jpg" 
-                      alt="Fig. 01 — Sona Ritual Dock" 
-                      className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500" 
+                    <img
+                      src="/Project Images/Sona/Web banner.jpg"
+                      alt="Fig. 01 — Sona Ritual Dock"
+                      className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500"
                     />
                   </div>
                   <div className="p-4 bg-paper-deep text-left w-full border-t border-hairline">
@@ -90,7 +90,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 01 */}
-      <motion.section 
+      <motion.section
         className="case-section py-16 border-t border-hairline"
         initial="hidden"
         whileInView="visible"
@@ -129,7 +129,7 @@ export default function SonaContent() {
                 body: "Designing for how people actually disengage, and refusing the tracking paradigm that makes the problem worse."
               }
             ].map((item, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 variants={fadeUp}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
@@ -149,7 +149,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 02 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20 bg-paper-deep border-t border-b border-hairline"
         initial="hidden"
         whileInView="visible"
@@ -177,7 +177,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 03 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20"
         initial="hidden"
         whileInView="visible"
@@ -205,7 +205,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 04 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20 bg-paper-deep border-t border-b border-hairline"
         initial="hidden"
         whileInView="visible"
@@ -248,7 +248,7 @@ export default function SonaContent() {
                 q: "Could an object help people disengage better than another screen?"
               }
             ].map((item, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 variants={fadeUp}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
@@ -271,7 +271,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 05 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20"
         initial="hidden"
         whileInView="visible"
@@ -305,7 +305,7 @@ export default function SonaContent() {
                 body: "A ritual needs a fixed place to repeat. A wearable blurs into the day; a candle has no system behind it. A dock gives the evening a spot to return to — and place is what makes a habit stick."
               }
             ].map((item, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 variants={fadeUp}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
@@ -325,7 +325,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 06 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20 bg-paper-deep border-t border-b border-hairline"
         initial="hidden"
         whileInView="visible"
@@ -363,7 +363,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 07 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20"
         initial="hidden"
         whileInView="visible"
@@ -388,10 +388,10 @@ export default function SonaContent() {
           <motion.div variants={fadeUp} className="figure group">
             <div className="figure-box p-0 overflow-hidden border border-hairline rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
               <div className="overflow-hidden">
-                <img 
-                  src="/Project Images/Sona/Visual World with heading .jpg" 
-                  alt="Fig. 02 — Sona visual world reference board" 
-                  className="w-full h-auto object-cover group-hover:scale-[1.01] transition-transform duration-500" 
+                <img
+                  src="/Project Images/Sona/Visual World with heading .jpg"
+                  alt="Fig. 02 — Sona visual world reference board"
+                  className="w-full h-auto object-cover group-hover:scale-[1.01] transition-transform duration-500"
                 />
               </div>
               <div className="p-4 bg-paper-deep text-left w-full border-t border-hairline">
@@ -405,7 +405,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 08 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20 bg-paper-deep border-t border-b border-hairline"
         initial="hidden"
         whileInView="visible"
@@ -435,7 +435,7 @@ export default function SonaContent() {
               { num: "04", stage: "Release", desc: "The phone goes down; the room takes over.", owner: "Dock + Brand" },
               { num: "05", stage: "Rest", desc: "Reading, stillness — sleep arrived at, not chased.", owner: "The room" }
             ].map((step, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 variants={fadeUp}
                 whileHover={{ y: -3 }}
@@ -456,7 +456,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 09 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20"
         initial="hidden"
         whileInView="visible"
@@ -487,17 +487,17 @@ export default function SonaContent() {
               { src: "/Project Images/Sona/Screens_/Set up 1/Dock 02.jpg", num: "Fig. 03b · Dock — front view", desc: "Form and proportion." },
               { src: "/Project Images/Sona/Screens_/Set up 1/Dock 03.jpg", num: "Fig. 03c · Dock — section", desc: "Internal build, mechanism, dimensions." }
             ].map((fig, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 variants={fadeUp}
                 className="figure group"
               >
                 <div className="figure-box p-0 overflow-hidden border border-hairline rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
                   <div className="overflow-hidden">
-                    <img 
-                      src={fig.src} 
-                      alt={fig.num} 
-                      className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500" 
+                    <img
+                      src={fig.src}
+                      alt={fig.num}
+                      className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500"
                     />
                   </div>
                   <div className="p-4 bg-paper-deep text-left w-full border-t border-hairline">
@@ -513,7 +513,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 10 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20 bg-paper-deep border-t border-b border-hairline"
         initial="hidden"
         whileInView="visible"
@@ -542,17 +542,17 @@ export default function SonaContent() {
               { src: "/Project Images/Sona/Screens_/Set up 1/Compositions..jpg", num: "Fig. 04c · One composition", desc: "With its manual card." },
               { src: "/Project Images/Sona/Sona Compositions.png", num: "Fig. 04d · Specifications", desc: "Typography detail." }
             ].map((fig, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 variants={fadeUp}
                 className="figure group"
               >
                 <div className="figure-box p-0 overflow-hidden border border-hairline rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
                   <div className="overflow-hidden aspect-square flex items-center justify-center bg-white">
-                    <img 
-                      src={fig.src} 
-                      alt={fig.num} 
-                      className="max-h-full max-w-full object-contain p-2 group-hover:scale-[1.03] transition-transform duration-500" 
+                    <img
+                      src={fig.src}
+                      alt={fig.num}
+                      className="max-h-full max-w-full object-contain p-2 group-hover:scale-[1.03] transition-transform duration-500"
                     />
                   </div>
                   <div className="p-3 bg-paper-deep text-left w-full border-t border-hairline min-h-[90px]">
@@ -568,7 +568,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 11 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20"
         initial="hidden"
         whileInView="visible"
@@ -597,7 +597,7 @@ export default function SonaContent() {
               { num: "03", head: "Begin", body: "Place the incense paper in the Dock's vessel; the Dock recognises it and begins." },
               { num: "04", head: "Release", body: "Set the phone down. The ritual screen dims to the room and the sequence continues without you." }
             ].map((item, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
@@ -638,7 +638,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 12 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20 bg-paper-deep border-t border-b border-hairline"
         initial="hidden"
         whileInView="visible"
@@ -670,13 +670,14 @@ export default function SonaContent() {
                   <span className="label text-[10px] font-bold uppercase tracking-wider text-accent block mb-1">Interactive prototype</span>
                   <h3 className="title text-xl font-semibold text-ink font-sans">The nightly flow, end to end.</h3>
                 </div>
-                <Link 
-                  className="cta inline-flex items-center gap-2 px-5 py-3 rounded-full bg-accent text-white font-semibold text-sm hover:bg-[#432014] hover:-translate-y-0.5 hover:shadow-sm transition-all duration-300" 
-                  href="/Prototype/Sona/Sona Prototype.html" 
+                <a
+                  className="cta inline-flex items-center gap-2 px-5 py-3 rounded-full bg-accent text-white font-semibold text-sm hover:bg-[#432014] hover:-translate-y-0.5 hover:shadow-sm transition-all duration-300"
+                  href="/Prototype/Sona/Sona%20Prototype.html"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Open prototype <FiArrowRight />
-                </Link>
+                </a>
               </div>
             </motion.div>
           </div>
@@ -684,7 +685,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 13 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20"
         initial="hidden"
         whileInView="visible"
@@ -713,7 +714,7 @@ export default function SonaContent() {
               { num: "03", head: "Ritual, not spiritual" },
               { num: "04", head: "Contemporary, not clinical" }
             ].map((item, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 variants={fadeUp}
                 whileHover={{ scale: 1.02 }}
@@ -751,7 +752,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 14 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20 bg-paper-deep border-t border-b border-hairline"
         initial="hidden"
         whileInView="visible"
@@ -789,7 +790,7 @@ export default function SonaContent() {
       </motion.section>
 
       {/* Section 15 */}
-      <motion.section 
+      <motion.section
         className="case-section py-20"
         initial="hidden"
         whileInView="visible"
@@ -821,8 +822,8 @@ export default function SonaContent() {
         <div className="container flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-md">
             <span className="label text-[10px] uppercase tracking-widest text-muted block mb-1">Return to</span>
-            <Link 
-              className="next-project-link inline-flex items-center gap-2 font-serif text-3xl font-semibold text-ink hover:text-accent transition-colors duration-200" 
+            <Link
+              className="next-project-link inline-flex items-center gap-2 font-serif text-3xl font-semibold text-ink hover:text-accent transition-colors duration-200"
               href="/#work"
             >
               <FiArrowLeft className="text-xl" /> Selected Work
@@ -834,8 +835,8 @@ export default function SonaContent() {
 
           <div className="text-right">
             <span className="label text-[10px] uppercase tracking-widest text-muted block mb-1">Next case study</span>
-            <Link 
-              className="next-project-link inline-flex items-center gap-2 font-serif text-3xl font-semibold text-ink hover:text-accent transition-colors duration-200" 
+            <Link
+              className="next-project-link inline-flex items-center gap-2 font-serif text-3xl font-semibold text-ink hover:text-accent transition-colors duration-200"
               href="/work/genie"
             >
               Genie <FiArrowRight className="text-xl" />
